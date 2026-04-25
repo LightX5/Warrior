@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 2000" role="img" aria-labelledby="title desc">
+  <title id="title">Street Witness</title>
+  <desc id="desc">Street documentary placeholder artwork for Warrior Lens photography.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080808" />
+      <stop offset="55%" stop-color="#0f1112" />
+      <stop offset="100%" stop-color="#141d20" />
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="2000" fill="url(#bg)" />
+  <rect x="210" y="420" width="210" height="910" rx="50" fill="#ffffff" fill-opacity=".07" />
+  <rect x="490" y="520" width="180" height="810" rx="40" fill="#ffffff" fill-opacity=".05" />
+  <rect x="760" y="360" width="250" height="970" rx="55" fill="#ffffff" fill-opacity=".08" />
+  <rect x="1080" y="580" width="300" height="750" rx="55" fill="#ffffff" fill-opacity=".06" />
+  <circle cx="1230" cy="430" r="180" fill="#d5b359" fill-opacity=".12" />
+  <text x="160" y="1710" fill="#ffffff" fill-opacity=".12" font-family="Georgia, serif" font-size="280">WL</text>
+  <text x="160" y="1835" fill="#9fd0b0" font-family="Inter, Arial, sans-serif" font-size="56" letter-spacing="18">STREET WITNESS</text>
+</svg>

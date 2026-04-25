@@ -1,0 +1,126 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-canvas font-body text-white antialiased;
+    background-image:
+      radial-gradient(circle at top left, rgba(255, 255, 255, 0.06), transparent 22%),
+      radial-gradient(circle at top right, rgba(213, 179, 89, 0.12), transparent 30%),
+      linear-gradient(180deg, #050505 0%, #070707 35%, #050505 100%);
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 8rem 8rem;
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.45), transparent 85%);
+    opacity: 0.18;
+  }
+
+  ::selection {
+    background: rgba(213, 179, 89, 0.3);
+    color: white;
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
+  }
+}
+
+@layer components {
+  .section-shell {
+    @apply mx-auto w-[min(100%-1.5rem,1280px)];
+  }
+
+  .section-block {
+    @apply relative py-24 sm:py-28 lg:py-32;
+  }
+
+  .glass-panel {
+    @apply border border-white/10 bg-white/[0.045] shadow-luxe backdrop-blur-xl;
+  }
+
+  .section-eyebrow {
+    @apply mb-4 inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.4em] text-accent-soft/90;
+  }
+
+  .section-title {
+    @apply font-display text-4xl leading-none text-white sm:text-5xl lg:text-6xl;
+  }
+
+  .section-copy {
+    @apply text-sm leading-7 text-white/65 sm:text-base;
+  }
+
+  .primary-button {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-accent/60 bg-accent px-6 py-3 text-sm font-semibold text-black transition duration-300 hover:-translate-y-0.5 hover:bg-accent-soft;
+  }
+
+  .secondary-button {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:border-accent/60 hover:bg-white/10;
+  }
+
+  .field-input {
+    @apply w-full rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white outline-none transition duration-200 placeholder:text-white/35 focus:border-accent/60 focus:bg-white/[0.06];
+  }
+
+  .field-label {
+    @apply mb-2 block text-xs font-semibold uppercase tracking-[0.28em] text-white/55;
+  }
+
+  .masonry-grid {
+    column-gap: 1.25rem;
+    column-count: 1;
+  }
+
+  .masonry-item {
+    break-inside: avoid;
+    margin-bottom: 1.25rem;
+  }
+
+  .mask-fade-bottom {
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.35));
+  }
+
+  @media (min-width: 768px) {
+    .masonry-grid {
+      column-count: 2;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .masonry-grid {
+      column-count: 3;
+    }
+  }
+}
+
+::-webkit-scrollbar {
+  width: 0.8rem;
+}
+
+::-webkit-scrollbar-track {
+  background: #090909;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  border: 2px solid #090909;
+}

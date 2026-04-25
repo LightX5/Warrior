@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 2000" role="img" aria-labelledby="title desc">
+  <title id="title">Quiet Confidence</title>
+  <desc id="desc">Editorial placeholder artwork for Warrior Lens portrait photography.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0a0a" />
+      <stop offset="55%" stop-color="#141414" />
+      <stop offset="100%" stop-color="#272015" />
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="2000" fill="url(#bg)" />
+  <circle cx="1160" cy="430" r="290" fill="#d5b359" fill-opacity=".16" />
+  <rect x="200" y="260" width="760" height="1180" rx="380" fill="#f5f0df" fill-opacity=".06" />
+  <rect x="460" y="200" width="360" height="1280" rx="180" fill="#ffffff" fill-opacity=".05" />
+  <text x="160" y="1710" fill="#ffffff" fill-opacity=".12" font-family="Georgia, serif" font-size="280">WL</text>
+  <text x="160" y="1835" fill="#f1d995" font-family="Inter, Arial, sans-serif" font-size="56" letter-spacing="18">QUIET CONFIDENCE</text>
+</svg>

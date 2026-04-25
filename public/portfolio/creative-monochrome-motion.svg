@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 2000" role="img" aria-labelledby="title desc">
+  <title id="title">Monochrome Motion</title>
+  <desc id="desc">Creative motion placeholder artwork for Warrior Lens photography.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090909" />
+      <stop offset="50%" stop-color="#131313" />
+      <stop offset="100%" stop-color="#1d1d1d" />
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="2000" fill="url(#bg)" />
+  <g stroke="#ffffff" stroke-opacity=".1" fill="none" stroke-linecap="round">
+    <path d="M310 820c180-260 320-390 420-390s225 65 565 390" stroke-width="42" />
+    <path d="M280 1010c180-260 320-390 420-390s225 65 565 390" stroke-width="30" />
+    <path d="M250 1200c180-260 320-390 420-390s225 65 565 390" stroke-width="18" />
+  </g>
+  <circle cx="1240" cy="540" r="220" fill="#d5b359" fill-opacity=".1" />
+  <text x="160" y="1710" fill="#ffffff" fill-opacity=".12" font-family="Georgia, serif" font-size="280">WL</text>
+  <text x="160" y="1835" fill="#f1d995" font-family="Inter, Arial, sans-serif" font-size="56" letter-spacing="18">MONOCHROME MOTION</text>
+</svg>

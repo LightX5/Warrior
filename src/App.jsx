@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
-import { useMemo, useState } from "react";
-import { AnimatePresence } from "framer-motion";
+import { lazy, Suspense, useMemo, useState } from "react";
+import { AnimatePresence, MotionConfig, motion } from "framer-motion";
 import { Navbar } from "./components/Navbar";
 import { HeroSection } from "./components/HeroSection";
 import { AboutSection } from "./components/AboutSection";
@@ -10,12 +10,17 @@ import { BookingSection } from "./components/BookingSection";
 import { ContactSection } from "./components/ContactSection";
 import { Footer } from "./components/Footer";
 import { FloatingWhatsAppButton } from "./components/FloatingWhatsAppButton";
-import { LightboxModal } from "./components/LightboxModal";
+import { MobileStickyBookingBar } from "./components/MobileStickyBookingBar";
 import { heroSlides, siteMetadata } from "./config/site";
 import { portfolioItems } from "./data/portfolio";
 import { useActiveSection } from "./hooks/useActiveSection";
 
 const sectionIds = ["home", "about", "portfolio", "services", "booking", "contact"];
+const LightboxModal = lazy(() =>
+  import("./components/LightboxModal").then((module) => ({
+    default: module.LightboxModal,
+  }))
+);
 
 export default function App() {
   const activeSection = useActiveSection(sectionIds);
@@ -48,7 +53,7 @@ export default function App() {
   };
 
   return (
-    <>
+    <MotionConfig reducedMotion="user">
       <Helmet>
         <title>{siteMetadata.title}</title>
         <meta name="description" content={siteMetadata.description} />
@@ -62,28 +67,37 @@ export default function App() {
         </div>
 
         <Navbar activeSection={activeSection} sections={sectionIds} />
-        <HeroSection slides={heroSlides} />
-        <main>
-          <AboutSection />
-          <PortfolioSection items={portfolioItems} onOpenLightbox={openLightbox} />
-          <ServicesSection />
-          <BookingSection />
-          <ContactSection />
-        </main>
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.65, ease: "easeOut" }}
+        >
+          <HeroSection slides={heroSlides} />
+          <main>
+            <AboutSection />
+            <PortfolioSection items={portfolioItems} onOpenLightbox={openLightbox} />
+            <ServicesSection />
+            <BookingSection />
+            <ContactSection />
+          </main>
+        </motion.div>
         <Footer />
         <FloatingWhatsAppButton />
+        <MobileStickyBookingBar />
       </div>
 
       <AnimatePresence>
         {lightboxItem ? (
-          <LightboxModal
-            item={lightboxItem}
-            onClose={() => setLightboxIndex(null)}
-            onNext={() => moveLightbox(1)}
-            onPrevious={() => moveLightbox(-1)}
-          />
+          <Suspense fallback={null}>
+            <LightboxModal
+              item={lightboxItem}
+              onClose={() => setLightboxIndex(null)}
+              onNext={() => moveLightbox(1)}
+              onPrevious={() => moveLightbox(-1)}
+            />
+          </Suspense>
         ) : null}
       </AnimatePresence>
-    </>
+    </MotionConfig>
   );
 }

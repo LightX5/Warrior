@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { siteConfig } from "../config/site";
+import { LazyImage } from "./LazyImage";
 import { SectionHeading } from "./SectionHeading";
 
 export const AboutSection = () => (
@@ -26,10 +27,12 @@ export const AboutSection = () => (
         transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
       >
         <div className="relative aspect-[4/4.4] overflow-hidden border-b border-white/10 bg-white/[0.03]">
-          <img
+          <LazyImage
             src={siteConfig.founderImage}
             alt={`${siteConfig.founder}, Founder and CEO of Warrior Lens`}
-            className="h-full w-full object-cover"
+            className="h-full w-full"
+            imgClassName="object-cover"
+            sizes="(min-width: 1024px) 34vw, 100vw"
           />
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-black/15 to-transparent" />
           <div className="absolute inset-x-0 bottom-0 p-6">

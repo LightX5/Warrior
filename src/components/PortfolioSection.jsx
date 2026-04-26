@@ -1,20 +1,22 @@
-import { useMemo, useState } from "react";
+import { startTransition, useDeferredValue, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { siteConfig } from "../config/site";
 import { portfolioCategories } from "../data/portfolio";
 import { SectionHeading } from "./SectionHeading";
 import { LazyImage } from "./LazyImage";
+import { scrollToSection } from "../utils/scroll";
 
 export const PortfolioSection = ({ items, onOpenLightbox }) => {
   const [activeFilter, setActiveFilter] = useState("All");
+  const deferredFilter = useDeferredValue(activeFilter);
 
   const filteredItems = useMemo(() => {
-    if (activeFilter === "All") {
+    if (deferredFilter === "All") {
       return items;
     }
 
-    return items.filter((item) => item.category === activeFilter);
-  }, [activeFilter, items]);
+    return items.filter((item) => item.category === deferredFilter);
+  }, [deferredFilter, items]);
 
   return (
     <section id="portfolio" className="section-block">
@@ -38,6 +40,16 @@ export const PortfolioSection = ({ items, onOpenLightbox }) => {
           >
             Open Full Portfolio
           </a>
+          <a
+            href="#booking"
+            className="secondary-button"
+            onClick={(event) => {
+              event.preventDefault();
+              scrollToSection("booking", "#booking-service");
+            }}
+          >
+            Check Availability
+          </a>
         </div>
 
         <div className="mt-10 flex flex-wrap gap-3">
@@ -50,7 +62,11 @@ export const PortfolioSection = ({ items, onOpenLightbox }) => {
                   ? "border-accent bg-accent text-black"
                   : "border-white/10 bg-white/5 text-white/65 hover:border-white/20 hover:text-white"
               }`}
-              onClick={() => setActiveFilter(category)}
+              onClick={() => {
+                startTransition(() => {
+                  setActiveFilter(category);
+                });
+              }}
             >
               {category}
             </button>
@@ -80,9 +96,15 @@ export const PortfolioSection = ({ items, onOpenLightbox }) => {
                       alt={item.alt}
                       className="w-full"
                       style={{ aspectRatio: item.ratio }}
-                      imgClassName="group-hover:scale-105"
+                      sizes="(min-width: 1280px) 30vw, (min-width: 768px) 46vw, 100vw"
+                      imgClassName="duration-700 group-hover:scale-[1.06] group-hover:brightness-105"
                     />
                     <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent opacity-90" />
+                    <div className="pointer-events-none absolute inset-x-0 top-0 flex items-center justify-between px-5 pt-5">
+                      <span className="translate-y-2 rounded-full border border-white/10 bg-black/35 px-3 py-1 text-[0.68rem] uppercase tracking-[0.28em] text-white/0 transition duration-300 group-hover:translate-y-0 group-hover:text-white/70">
+                        Open Frame
+                      </span>
+                    </div>
                   </div>
                   <div className="space-y-3 p-5">
                     <div className="flex flex-wrap items-center justify-between gap-3">

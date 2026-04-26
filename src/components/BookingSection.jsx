@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { siteConfig } from "../config/site";
 import { services } from "../data/services";
 import { postBooking } from "../lib/api";
 import { getLocalDateInputMin } from "../utils/date";
@@ -17,6 +18,7 @@ import {
   MapPinIcon,
   PhoneIcon,
   SparklesIcon,
+  WhatsAppIcon,
 } from "./icons";
 
 const iconMap = {
@@ -26,6 +28,8 @@ const iconMap = {
   film: FilmIcon,
   sparkles: SparklesIcon,
 };
+
+const bookingStorageKey = "warrior-lens-booking-progress-v4";
 
 const initialValues = {
   name: "",
@@ -41,75 +45,53 @@ const initialValues = {
 const locationSuggestions = ["Lagos", "Studio Session", "OAU Campus", "Destination Shoot"];
 
 const durationOptions = [
-  {
-    value: "1 hour",
-    label: "1 Hour",
-    detail: "Best for quick portraits, mini sessions, or a focused creative set.",
-  },
-  {
-    value: "2 hours",
-    label: "2 Hours",
-    detail: "A strong fit for portraits, campus sessions, and short editorial stories.",
-  },
-  {
-    value: "4 hours",
-    label: "Half Day",
-    detail: "Ideal for event highlights, documentary moments, or multiple looks.",
-  },
-  {
-    value: "8 hours",
-    label: "Full Day",
-    detail: "Made for weddings, long events, or deeper story-driven coverage.",
-  },
-  {
-    value: "Custom scope",
-    label: "Custom",
-    detail: "For projects that need a tailored schedule, crew setup, or pacing.",
-  },
+  { value: "1 hour", label: "1 Hour", detail: "Short portraits, minis, or tightly directed sessions." },
+  { value: "2 hours", label: "2 Hours", detail: "A strong middle ground for portraits, grads, and concept sets." },
+  { value: "4 hours", label: "Half Day", detail: "For event highlights, layered storytelling, or multiple looks." },
+  { value: "8 hours", label: "Full Day", detail: "Best for weddings, conferences, and deeper documentary coverage." },
+  { value: "Custom scope", label: "Custom", detail: "For campaigns, travel, production-heavy, or multi-location shoots." },
 ];
 
 const bookingSteps = [
   {
-    id: "location",
+    id: "service",
+    shortLabel: "Service",
     eyebrow: "Step 1",
-    title: "Where will the session happen?",
-    copy: "Start with the city, venue, or area so Warrior Lens can shape the quote around logistics and atmosphere.",
-    fields: ["location"],
+    title: "Select the service you want to book.",
+    copy: "Choose the kind of coverage you need and how long you expect it to run.",
+    fields: ["service", "duration"],
   },
   {
-    id: "coverage",
+    id: "schedule",
+    shortLabel: "Date",
     eyebrow: "Step 2",
-    title: "What kind of coverage do you need?",
-    copy: "Choose the shoot type that best matches the story, mood, or event you want captured.",
-    fields: ["service"],
+    title: "Choose the date and location.",
+    copy: "Share the preferred date and where the session should happen so availability can be checked properly.",
+    fields: ["date", "location"],
   },
   {
-    id: "duration",
+    id: "details",
+    shortLabel: "Details",
     eyebrow: "Step 3",
-    title: "How long should the coverage run?",
-    copy: "A time estimate helps shape pricing, pacing, and how the shoot day is planned.",
-    fields: ["duration"],
+    title: "Enter your details and the shoot brief.",
+    copy: "This is where Warrior Lens learns who to reply to and what kind of experience you want created.",
+    fields: ["name", "email", "phone", "message"],
   },
   {
-    id: "date",
+    id: "review",
+    shortLabel: "Review",
     eyebrow: "Step 4",
-    title: "When should the session happen?",
-    copy: "Pick the preferred date. If the timing may shift, you can mention that in the final note.",
-    fields: ["date"],
+    title: "Review everything before you continue.",
+    copy: "This review step makes the booking feel more like a premium consultation than a generic form.",
+    fields: [],
   },
   {
-    id: "contact",
+    id: "submit",
+    shortLabel: "Submit",
     eyebrow: "Step 5",
-    title: "Who should Warrior Lens reply to?",
-    copy: "Add the best contact details so the quote and follow-up can reach the right person quickly.",
-    fields: ["name", "email", "phone"],
-  },
-  {
-    id: "notes",
-    eyebrow: "Step 6",
-    title: "Add the brief and send the request.",
-    copy: "Share mood, purpose, expectations, or special requests. Then submit the booking inquiry.",
-    fields: ["message"],
+    title: "Send the request and lock in the consultation.",
+    copy: "Submit when the summary looks right. The request will be saved and delivered to the studio inbox.",
+    fields: [],
   },
 ];
 
@@ -139,6 +121,14 @@ const getStepErrors = (step, values) => {
   }, {});
 };
 
+const buildSummary = (values) => [
+  { label: "Service", value: values.service || "Pending", icon: CameraIcon },
+  { label: "Duration", value: values.duration || "Pending", icon: SparklesIcon },
+  { label: "Preferred Date", value: formatDisplayDate(values.date), icon: CalendarIcon },
+  { label: "Location", value: values.location || "Pending", icon: MapPinIcon },
+  { label: "Contact", value: values.name || values.email || "Pending", icon: PhoneIcon },
+];
+
 export const BookingSection = () => {
   const [formData, setFormData] = useState(initialValues);
   const [errors, setErrors] = useState({});
@@ -149,37 +139,49 @@ export const BookingSection = () => {
   const [successMessage, setSuccessMessage] = useState(
     "Your booking request has been submitted to Warrior Lens Studio."
   );
+  const [hasRestoredDraft, setHasRestoredDraft] = useState(false);
 
   const currentStep = bookingSteps[activeStep];
   const minBookingDate = useMemo(() => getLocalDateInputMin(), []);
+  const summaryItems = useMemo(() => buildSummary(formData), [formData]);
 
-  const summaryItems = [
-    {
-      label: "Location",
-      value: formData.location || "Pending",
-      icon: MapPinIcon,
-    },
-    {
-      label: "Coverage",
-      value: formData.service || "Pending",
-      icon: CameraIcon,
-    },
-    {
-      label: "How long",
-      value: formData.duration || "Pending",
-      icon: SparklesIcon,
-    },
-    {
-      label: "Date",
-      value: formatDisplayDate(formData.date),
-      icon: CalendarIcon,
-    },
-    {
-      label: "Contact",
-      value: formData.name || formData.email || "Pending",
-      icon: PhoneIcon,
-    },
-  ];
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    try {
+      const storedDraft = window.localStorage.getItem(bookingStorageKey);
+      if (!storedDraft) {
+        return;
+      }
+
+      const parsedDraft = JSON.parse(storedDraft);
+      if (parsedDraft?.formData) {
+        setFormData((current) => ({ ...current, ...parsedDraft.formData }));
+      }
+      if (typeof parsedDraft?.activeStep === "number") {
+        setActiveStep(Math.min(parsedDraft.activeStep, bookingSteps.length - 1));
+      }
+      setHasRestoredDraft(true);
+    } catch {
+      window.localStorage.removeItem(bookingStorageKey);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    window.localStorage.setItem(
+      bookingStorageKey,
+      JSON.stringify({
+        activeStep,
+        formData,
+      })
+    );
+  }, [activeStep, formData]);
 
   const handleFieldValue = (name, value) => {
     setFormData((current) => ({ ...current, [name]: value }));
@@ -194,13 +196,8 @@ export const BookingSection = () => {
     handleFieldValue(name, value);
   };
 
-  const handleLocationSuggestion = (suggestion) => {
-    handleFieldValue("location", suggestion);
-  };
-
   const handleNextStep = () => {
     const nextErrors = getStepErrors(currentStep, formData);
-
     if (Object.keys(nextErrors).length > 0) {
       setErrors((current) => ({ ...current, ...nextErrors }));
       return;
@@ -219,18 +216,14 @@ export const BookingSection = () => {
     setSubmitError("");
 
     const nextErrors = validateBookingForm(formData);
-
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors);
-
       const firstInvalidStepIndex = bookingSteps.findIndex((step) =>
         step.fields.some((field) => nextErrors[field])
       );
-
       if (firstInvalidStepIndex >= 0) {
         setActiveStep(firstInvalidStepIndex);
       }
-
       return;
     }
 
@@ -244,6 +237,9 @@ export const BookingSection = () => {
         payload.message || "Your booking request has been submitted to Warrior Lens Studio."
       );
       setShowSuccess(true);
+      if (typeof window !== "undefined") {
+        window.localStorage.removeItem(bookingStorageKey);
+      }
     } catch (error) {
       setSubmitError(error.message || "Unable to submit your booking right now.");
     } finally {
@@ -257,12 +253,12 @@ export const BookingSection = () => {
         <div className="max-w-3xl">
           <SectionHeading
             eyebrow="Booking Experience"
-            title="A guided booking flow designed to feel like a premium inquiry, not a long form."
-            copy="Warrior Lens now uses a step-by-step booking journey inspired by premium studio quote flows, starting with location and coverage before moving into timing, contact details, and the final brief."
+            title="A premium consultation funnel built to convert interest into confirmed inquiry."
+            copy="This booking flow is now structured like a premium studio consultation: service selection, scheduling, client details, review, and final submission."
           />
         </div>
 
-        <div className="mt-10 grid gap-6 xl:grid-cols-[minmax(0,1fr)_21rem]">
+        <div className="mt-10 grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
           <motion.form
             className="glass-panel overflow-hidden rounded-[2rem]"
             initial={{ opacity: 0, y: 28 }}
@@ -272,33 +268,66 @@ export const BookingSection = () => {
             onSubmit={handleSubmit}
           >
             <div className="border-b border-white/10 px-6 py-6 sm:px-8">
-              <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-                <div>
-                  <p className="section-eyebrow mb-3">{currentStep.eyebrow}</p>
-                  <h3 className="font-display text-3xl text-white sm:text-4xl">
-                    {currentStep.title}
-                  </h3>
-                  <p className="mt-4 max-w-2xl text-sm leading-7 text-white/68">
-                    {currentStep.copy}
-                  </p>
+              <div className="flex flex-col gap-5">
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                  <div>
+                    <p className="section-eyebrow mb-3">{currentStep.eyebrow}</p>
+                    <h3 className="font-display text-3xl text-white sm:text-4xl">
+                      {currentStep.title}
+                    </h3>
+                    <p className="mt-4 max-w-2xl text-sm leading-7 text-white/68">
+                      {currentStep.copy}
+                    </p>
+                  </div>
+
+                  <div className="min-w-[10rem]">
+                    <div className="mb-2 flex items-center justify-between text-xs uppercase tracking-[0.3em] text-white/40">
+                      <span>Progress</span>
+                      <span>
+                        {activeStep + 1}/{bookingSteps.length}
+                      </span>
+                    </div>
+                    <div className="h-2 rounded-full bg-white/8">
+                      <motion.div
+                        className="h-full rounded-full bg-accent"
+                        animate={{
+                          width: `${((activeStep + 1) / bookingSteps.length) * 100}%`,
+                        }}
+                        transition={{ duration: 0.35, ease: "easeOut" }}
+                      />
+                    </div>
+                  </div>
                 </div>
 
-                <div className="min-w-[8rem]">
-                  <div className="mb-2 flex items-center justify-between text-xs uppercase tracking-[0.3em] text-white/40">
-                    <span>Progress</span>
-                    <span>
-                      {activeStep + 1}/{bookingSteps.length}
-                    </span>
-                  </div>
-                  <div className="h-2 rounded-full bg-white/8">
-                    <motion.div
-                      className="h-full rounded-full bg-accent"
-                      animate={{
-                        width: `${((activeStep + 1) / bookingSteps.length) * 100}%`,
-                      }}
-                      transition={{ duration: 0.35, ease: "easeOut" }}
-                    />
-                  </div>
+                <div className="grid gap-2 sm:grid-cols-5">
+                  {bookingSteps.map((step, index) => {
+                    const isActive = index === activeStep;
+                    const isComplete = index < activeStep;
+
+                    return (
+                      <button
+                        key={step.id}
+                        type="button"
+                        className={`min-h-11 rounded-2xl border px-3 py-3 text-left text-sm transition ${
+                          isActive
+                            ? "border-accent/70 bg-accent/10 text-white"
+                            : isComplete
+                              ? "border-white/15 bg-white/[0.05] text-white/75"
+                              : "border-white/10 bg-transparent text-white/40"
+                        }`}
+                        onClick={() => {
+                          if (index <= activeStep) {
+                            setActiveStep(index);
+                          }
+                        }}
+                      >
+                        <span className="block text-[0.68rem] uppercase tracking-[0.28em] text-white/35">
+                          0{index + 1}
+                        </span>
+                        <span className="mt-2 block font-medium">{step.shortLabel}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -311,64 +340,11 @@ export const BookingSection = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -18 }}
                   transition={{ duration: 0.28, ease: "easeOut" }}
-                  className="min-h-[22rem]"
+                  className="min-h-[25rem]"
                 >
-                  {currentStep.id === "location" ? (
-                    <div>
-                      <label htmlFor="booking-location" className="field-label">
-                        Location
-                      </label>
-                      <input
-                        id="booking-location"
-                        name="location"
-                        type="text"
-                        value={formData.location}
-                        onChange={handleChange}
-                        className="field-input"
-                        placeholder="Lagos, campus, studio, or preferred venue"
-                        autoComplete="address-level2"
-                        required
-                      />
-                      {errors.location ? (
-                        <p className="mt-3 text-sm text-red-300">{errors.location}</p>
-                      ) : null}
-
-                      <div className="mt-8">
-                        <p className="field-label">Quick picks</p>
-                        <div className="flex flex-wrap gap-3">
-                          {locationSuggestions.map((suggestion) => (
-                            <button
-                              key={suggestion}
-                              type="button"
-                              className={`rounded-full border px-4 py-2 text-sm transition ${
-                                formData.location === suggestion
-                                  ? "border-accent/70 bg-accent/15 text-accent-soft"
-                                  : "border-white/10 bg-white/5 text-white/75 hover:border-white/25 hover:bg-white/10"
-                              }`}
-                              onClick={() => handleLocationSuggestion(suggestion)}
-                            >
-                              {suggestion}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="mt-8 rounded-[1.5rem] border border-white/10 bg-white/[0.03] p-5">
-                        <p className="text-xs uppercase tracking-[0.3em] text-white/40">
-                          Why it comes first
-                        </p>
-                        <p className="mt-3 text-sm leading-7 text-white/66">
-                          Like premium quote flows, Warrior Lens starts with location so travel,
-                          availability, and the overall mood of the session can guide everything
-                          that follows.
-                        </p>
-                      </div>
-                    </div>
-                  ) : null}
-
-                  {currentStep.id === "coverage" ? (
-                    <div>
-                      <div className="grid gap-4 md:grid-cols-2">
+                  {currentStep.id === "service" ? (
+                    <div className="space-y-8">
+                      <div id="booking-service" tabIndex={-1} className="grid gap-4 md:grid-cols-2">
                         {services.map((service) => {
                           const Icon = iconMap[service.icon] || CameraIcon;
                           const isSelected = formData.service === service.title;
@@ -399,76 +375,117 @@ export const BookingSection = () => {
                         })}
                       </div>
 
-                      {errors.service ? (
-                        <p className="mt-4 text-sm text-red-300">{errors.service}</p>
-                      ) : null}
-                    </div>
-                  ) : null}
+                      {errors.service ? <p className="text-sm text-red-300">{errors.service}</p> : null}
 
-                  {currentStep.id === "duration" ? (
-                    <div>
-                      <div className="grid gap-4 md:grid-cols-2">
-                        {durationOptions.map((option) => {
-                          const isSelected = formData.duration === option.value;
+                      <div>
+                        <p className="field-label">How long should the session run?</p>
+                        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                          {durationOptions.map((option) => {
+                            const isSelected = formData.duration === option.value;
 
-                          return (
-                            <button
-                              key={option.value}
-                              type="button"
-                              className={`rounded-[1.6rem] border p-5 text-left transition ${
-                                isSelected
-                                  ? "border-accent/70 bg-accent/10 shadow-[0_0_0_1px_rgba(213,179,89,0.18)]"
-                                  : "border-white/10 bg-white/[0.03] hover:border-white/20 hover:bg-white/[0.05]"
-                              }`}
-                              onClick={() => handleFieldValue("duration", option.value)}
-                              aria-pressed={isSelected}
-                            >
-                              <p className="text-xs uppercase tracking-[0.3em] text-accent-soft/80">
-                                {option.label}
-                              </p>
-                              <p className="mt-3 font-display text-3xl text-white">{option.value}</p>
-                              <p className="mt-3 text-sm leading-7 text-white/65">{option.detail}</p>
-                            </button>
-                          );
-                        })}
-                      </div>
-
-                      {errors.duration ? (
-                        <p className="mt-4 text-sm text-red-300">{errors.duration}</p>
-                      ) : null}
-                    </div>
-                  ) : null}
-
-                  {currentStep.id === "date" ? (
-                    <div className="max-w-xl">
-                      <label htmlFor="booking-date" className="field-label">
-                        Preferred Date
-                      </label>
-                      <input
-                        id="booking-date"
-                        name="date"
-                        type="date"
-                        min={minBookingDate}
-                        value={formData.date}
-                        onChange={handleChange}
-                        className="field-input"
-                        required
-                      />
-                      {errors.date ? <p className="mt-3 text-sm text-red-300">{errors.date}</p> : null}
-
-                      <div className="mt-8 rounded-[1.5rem] border border-white/10 bg-white/[0.03] p-5">
-                        <p className="text-xs uppercase tracking-[0.3em] text-white/40">
-                          Timing note
-                        </p>
-                        <p className="mt-3 text-sm leading-7 text-white/66">
-                          If the date is flexible, mention the possible range in your final note so
-                          the quote can allow for movement.
-                        </p>
+                            return (
+                              <button
+                                key={option.value}
+                                type="button"
+                                className={`rounded-[1.5rem] border p-5 text-left transition ${
+                                  isSelected
+                                    ? "border-accent/70 bg-accent/10"
+                                    : "border-white/10 bg-white/[0.03] hover:border-white/20 hover:bg-white/[0.05]"
+                                }`}
+                                onClick={() => handleFieldValue("duration", option.value)}
+                              >
+                                <p className="text-xs uppercase tracking-[0.3em] text-accent-soft/85">
+                                  {option.label}
+                                </p>
+                                <p className="mt-3 font-display text-3xl text-white">
+                                  {option.value}
+                                </p>
+                                <p className="mt-3 text-sm leading-7 text-white/65">
+                                  {option.detail}
+                                </p>
+                              </button>
+                            );
+                          })}
+                        </div>
+                        {errors.duration ? (
+                          <p className="mt-4 text-sm text-red-300">{errors.duration}</p>
+                        ) : null}
                       </div>
                     </div>
                   ) : null}
 
-                  {currentStep.id === "contact" ? (
+                  {currentStep.id === "schedule" ? (
+                    <div className="grid gap-8 xl:grid-cols-[minmax(0,0.9fr)_minmax(18rem,0.7fr)]">
+                      <div>
+                        <label htmlFor="booking-location" className="field-label">
+                          Location
+                        </label>
+                        <input
+                          id="booking-location"
+                          name="location"
+                          type="text"
+                          value={formData.location}
+                          onChange={handleChange}
+                          className="field-input"
+                          placeholder="Lagos, campus, studio, or preferred venue"
+                          autoComplete="address-level2"
+                          required
+                        />
+                        {errors.location ? (
+                          <p className="mt-3 text-sm text-red-300">{errors.location}</p>
+                        ) : null}
+
+                        <div className="mt-8">
+                          <p className="field-label">Quick picks</p>
+                          <div className="flex flex-wrap gap-3">
+                            {locationSuggestions.map((suggestion) => (
+                              <button
+                                key={suggestion}
+                                type="button"
+                                className={`min-h-11 rounded-full border px-4 py-2 text-sm transition ${
+                                  formData.location === suggestion
+                                    ? "border-accent/70 bg-accent/15 text-accent-soft"
+                                    : "border-white/10 bg-white/5 text-white/75 hover:border-white/25 hover:bg-white/10"
+                                }`}
+                                onClick={() => handleFieldValue("location", suggestion)}
+                              >
+                                {suggestion}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label htmlFor="booking-date" className="field-label">
+                          Preferred Date
+                        </label>
+                        <input
+                          id="booking-date"
+                          name="date"
+                          type="date"
+                          min={minBookingDate}
+                          value={formData.date}
+                          onChange={handleChange}
+                          className="field-input"
+                          required
+                        />
+                        {errors.date ? <p className="mt-3 text-sm text-red-300">{errors.date}</p> : null}
+
+                        <div className="mt-8 rounded-[1.5rem] border border-white/10 bg-white/[0.03] p-5">
+                          <p className="text-xs uppercase tracking-[0.3em] text-white/40">
+                            Schedule note
+                          </p>
+                          <p className="mt-3 text-sm leading-7 text-white/66">
+                            Availability is checked against the preferred date, service type, and
+                            location together, so this step sets the whole consultation up.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {currentStep.id === "details" ? (
                     <div className="grid gap-5 md:grid-cols-2">
                       <div className="md:col-span-2">
                         <label htmlFor="booking-name" className="field-label">
@@ -503,9 +520,7 @@ export const BookingSection = () => {
                           autoComplete="email"
                           required
                         />
-                        {errors.email ? (
-                          <p className="mt-3 text-sm text-red-300">{errors.email}</p>
-                        ) : null}
+                        {errors.email ? <p className="mt-3 text-sm text-red-300">{errors.email}</p> : null}
                       </div>
 
                       <div>
@@ -523,60 +538,127 @@ export const BookingSection = () => {
                           autoComplete="tel"
                           required
                         />
-                        {errors.phone ? (
-                          <p className="mt-3 text-sm text-red-300">{errors.phone}</p>
-                        ) : null}
+                        {errors.phone ? <p className="mt-3 text-sm text-red-300">{errors.phone}</p> : null}
                       </div>
-                    </div>
-                  ) : null}
 
-                  {currentStep.id === "notes" ? (
-                    <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_18rem]">
-                      <div>
+                      <div className="md:col-span-2">
                         <label htmlFor="booking-message" className="field-label">
-                          Message
+                          Brief
                         </label>
                         <textarea
                           id="booking-message"
                           name="message"
-                          rows="8"
+                          rows="7"
                           value={formData.message}
                           onChange={handleChange}
                           className="field-input resize-none"
-                          placeholder="Tell Warrior Lens about the mood, purpose, coverage details, or anything important for the quote."
+                          placeholder="Tell Warrior Lens about the mood, purpose, expectations, or any special notes for the session."
                           required
                         />
-                        {errors.message ? (
-                          <p className="mt-3 text-sm text-red-300">{errors.message}</p>
-                        ) : null}
+                        {errors.message ? <p className="mt-3 text-sm text-red-300">{errors.message}</p> : null}
+                      </div>
+                    </div>
+                  ) : null}
+                  
+                  {currentStep.id === "review" ? (
+                    <div className="space-y-6">
+                      <div className="grid gap-4 md:grid-cols-2">
+                        {summaryItems.map((item) => {
+                          const Icon = item.icon;
+
+                          return (
+                            <div
+                              key={item.label}
+                              className="rounded-[1.5rem] border border-white/10 bg-white/[0.03] p-5"
+                            >
+                              <div className="flex items-start gap-3">
+                                <div className="inline-flex rounded-2xl border border-white/10 bg-white/5 p-3 text-accent-soft">
+                                  <Icon className="h-4 w-4" />
+                                </div>
+                                <div>
+                                  <p className="text-xs uppercase tracking-[0.28em] text-white/40">
+                                    {item.label}
+                                  </p>
+                                  <p className="mt-3 text-sm leading-7 text-white/78">
+                                    {item.value}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
 
-                      <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.03] p-5">
-                        <p className="text-xs uppercase tracking-[0.3em] text-white/40">
-                          Ready to send
+                      <div className="rounded-[1.5rem] border border-accent/20 bg-accent/10 p-5">
+                        <p className="text-xs uppercase tracking-[0.3em] text-accent-soft/85">
+                          Auto-saved progress
                         </p>
-                        <div className="mt-4 space-y-4 text-sm text-white/72">
-                          <div>
-                            <p className="text-white/38">Location</p>
-                            <p className="mt-1">{formData.location || "Pending"}</p>
+                        <p className="mt-3 text-sm leading-7 text-white/72">
+                          Your progress is stored locally on this device, so if you leave and come
+                          back, the form can pick up from where you stopped.
+                        </p>
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {currentStep.id === "submit" ? (
+                    <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_18rem]">
+                      <div className="rounded-[1.75rem] border border-white/10 bg-white/[0.03] p-6">
+                        <p className="section-eyebrow mb-3">Before You Send</p>
+                        <h4 className="font-display text-3xl text-white">
+                          This is structured to feel like a consultation request.
+                        </h4>
+                        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                          <div className="rounded-[1.35rem] border border-white/10 bg-black/20 p-4">
+                            <p className="text-xs uppercase tracking-[0.28em] text-accent-soft/85">
+                              Response Path
+                            </p>
+                            <p className="mt-3 text-sm leading-7 text-white/70">
+                              Submitted requests are saved and delivered to the Warrior Lens inbox.
+                            </p>
                           </div>
-                          <div>
-                            <p className="text-white/38">Coverage</p>
-                            <p className="mt-1">{formData.service || "Pending"}</p>
-                          </div>
-                          <div>
-                            <p className="text-white/38">How long</p>
-                            <p className="mt-1">{formData.duration || "Pending"}</p>
-                          </div>
-                          <div>
-                            <p className="text-white/38">Date</p>
-                            <p className="mt-1">{formatDisplayDate(formData.date)}</p>
-                          </div>
-                          <div>
-                            <p className="text-white/38">Reply to</p>
-                            <p className="mt-1">{formData.email || "Pending"}</p>
+                          <div className="rounded-[1.35rem] border border-white/10 bg-black/20 p-4">
+                            <p className="text-xs uppercase tracking-[0.28em] text-accent-soft/85">
+                              Fast Follow-up
+                            </p>
+                            <p className="mt-3 text-sm leading-7 text-white/70">
+                              You can also continue the conversation directly on WhatsApp after you submit.
+                            </p>
                           </div>
                         </div>
+
+                        <div className="mt-6 rounded-[1.35rem] border border-white/10 bg-black/20 p-4">
+                          <p className="text-xs uppercase tracking-[0.28em] text-white/40">
+                            Brief Preview
+                          </p>
+                          <p className="mt-3 text-sm leading-7 text-white/72">
+                            {formData.message || "No brief added yet."}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="rounded-[1.75rem] border border-white/10 bg-white/[0.03] p-5">
+                        <p className="text-xs uppercase tracking-[0.3em] text-white/40">
+                          Final Summary
+                        </p>
+                        <div className="mt-4 space-y-4 text-sm text-white/72">
+                          {summaryItems.map((item) => (
+                            <div key={item.label}>
+                              <p className="text-white/40">{item.label}</p>
+                              <p className="mt-1">{item.value}</p>
+                            </div>
+                          ))}
+                        </div>
+
+                        <a
+                          href={siteConfig.whatsappUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="secondary-button mt-6 w-full justify-center"
+                        >
+                          <WhatsAppIcon className="h-4 w-4" />
+                          Chat on WhatsApp
+                        </a>
                       </div>
                     </div>
                   ) : null}
@@ -598,7 +680,7 @@ export const BookingSection = () => {
 
                 {activeStep < bookingSteps.length - 1 ? (
                   <button type="button" className="primary-button" onClick={handleNextStep}>
-                    Continue
+                    {activeStep === bookingSteps.length - 2 ? "Proceed to Submit" : "Continue"}
                     <ArrowRightIcon />
                   </button>
                 ) : (
@@ -618,10 +700,10 @@ export const BookingSection = () => {
             viewport={{ once: true, amount: 0.12 }}
             transition={{ duration: 0.7, ease: "easeOut", delay: 0.08 }}
           >
-            <p className="section-eyebrow mb-3">Booking Outline</p>
-            <h3 className="font-display text-3xl text-white">Live summary</h3>
+            <p className="section-eyebrow mb-3">Consultation Summary</p>
+            <h3 className="font-display text-3xl text-white">Always in view</h3>
             <p className="mt-4 text-sm leading-7 text-white/66">
-              Each answer is saved into the quote flow as you move from step to step.
+              The summary stays visible so the client always knows what is being booked.
             </p>
 
             <div className="mt-8 space-y-4">
@@ -656,17 +738,28 @@ export const BookingSection = () => {
               })}
             </div>
 
-            <div className="mt-8 rounded-[1.5rem] border border-accent/20 bg-accent/10 p-5">
-              <p className="text-xs uppercase tracking-[0.3em] text-accent-soft/85">
-                Concierge-style flow
-              </p>
-              <p className="mt-3 text-sm leading-7 text-white/68">
-                The sequence now mirrors modern quote journeys more closely: location first, then
-                coverage, duration, date, and contact before the final brief.
-              </p>
-              <div className="mt-5 flex items-center gap-3 text-sm text-white/70">
-                <MailIcon className="h-4 w-4 text-accent-soft" />
-                <span>Booking emails now include the full brief, including duration.</span>
+            <div className="mt-8 space-y-4 rounded-[1.5rem] border border-accent/20 bg-accent/10 p-5">
+              <div>
+                <p className="text-xs uppercase tracking-[0.3em] text-accent-soft/85">
+                  Trust Signals
+                </p>
+                <p className="mt-3 text-sm leading-7 text-white/68">
+                  This flow saves progress, validates each step, and delivers the request directly
+                  to the studio inbox for follow-up.
+                </p>
+              </div>
+
+              {hasRestoredDraft ? (
+                <div className="rounded-[1.25rem] border border-white/10 bg-black/20 p-4 text-sm text-white/70">
+                  Draft restored from this device.
+                </div>
+              ) : null}
+
+              <div className="rounded-[1.25rem] border border-white/10 bg-black/20 p-4">
+                <div className="flex items-center gap-3">
+                  <MailIcon className="h-4 w-4 text-accent-soft" />
+                  <p className="text-sm text-white/72">{siteConfig.email}</p>
+                </div>
               </div>
             </div>
           </motion.aside>

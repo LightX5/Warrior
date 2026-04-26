@@ -1,7 +1,9 @@
 import { motion } from "framer-motion";
 import { services } from "../data/services";
+import { scrollToSection } from "../utils/scroll";
 import { SectionHeading } from "./SectionHeading";
 import {
+  ArrowRightIcon,
   BrushIcon,
   CalendarIcon,
   CameraIcon,
@@ -53,6 +55,30 @@ export const ServicesSection = () => (
             </motion.article>
           );
         })}
+      </div>
+
+      <div className="glass-panel mt-8 rounded-[1.9rem] p-6 sm:p-7">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+          <div className="max-w-2xl">
+            <p className="section-eyebrow mb-3">Ready to Book?</p>
+            <h3 className="font-display text-3xl text-white sm:text-4xl">
+              Turn interest into a checked date and a real consultation.
+            </h3>
+            <p className="mt-4 text-sm leading-7 text-white/68">
+              Use the booking flow to select the service, date, location, and shoot brief in a
+              way that feels tailored rather than generic.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            className="primary-button w-full justify-center sm:w-auto"
+            onClick={() => scrollToSection("booking", "#booking-service")}
+          >
+            Check Availability
+            <ArrowRightIcon />
+          </button>
+        </div>
       </div>
     </div>
   </section>

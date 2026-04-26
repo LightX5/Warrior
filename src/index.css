@@ -13,6 +13,7 @@
 
   body {
     @apply bg-canvas font-body text-white antialiased;
+    min-height: 100vh;
     background-image:
       radial-gradient(circle at top left, rgba(255, 255, 255, 0.06), transparent 22%),
       radial-gradient(circle at top right, rgba(213, 179, 89, 0.12), transparent 30%),
@@ -69,11 +70,11 @@
   }
 
   .primary-button {
-    @apply inline-flex items-center justify-center gap-2 rounded-full border border-accent/60 bg-accent px-6 py-3 text-sm font-semibold text-black transition duration-300 hover:-translate-y-0.5 hover:bg-accent-soft;
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-accent/60 bg-accent px-6 py-3 text-sm font-semibold text-black shadow-[0_14px_36px_rgba(213,179,89,0.14)] transition duration-300 hover:-translate-y-1 hover:border-accent-soft hover:bg-accent-soft hover:shadow-[0_22px_44px_rgba(213,179,89,0.24)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-soft/70 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas;
   }
 
   .secondary-button {
-    @apply inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:border-accent/60 hover:bg-white/10;
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-white shadow-[0_10px_28px_rgba(0,0,0,0.2)] transition duration-300 hover:-translate-y-1 hover:border-accent/60 hover:bg-white/10 hover:shadow-[0_18px_38px_rgba(0,0,0,0.28)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-soft/55 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas;
   }
 
   .field-input {
@@ -123,4 +124,18 @@
   background: rgba(255, 255, 255, 0.16);
   border-radius: 999px;
   border: 2px solid #090909;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

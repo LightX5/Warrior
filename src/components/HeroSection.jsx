@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { ArrowRightIcon } from "./icons";
+import { LazyImage } from "./LazyImage";
 import { scrollToSection } from "../utils/scroll";
 
 export const HeroSection = ({ slides }) => {
@@ -37,10 +38,14 @@ export const HeroSection = ({ slides }) => {
           exit={{ opacity: 0, scale: 1.02 }}
           transition={{ duration: 1.2, ease: "easeOut" }}
         >
-          <img
+          <LazyImage
             src={slides[activeSlide].image}
             alt={slides[activeSlide].alt}
-            className="h-full w-full object-cover opacity-45"
+            className="absolute inset-0 h-full w-full"
+            imgClassName="opacity-45"
+            sizes="100vw"
+            priority={activeSlide === 0}
+            fill
           />
         </motion.div>
       </AnimatePresence>
@@ -80,7 +85,7 @@ export const HeroSection = ({ slides }) => {
               className="secondary-button"
               onClick={(event) => {
                 event.preventDefault();
-                scrollToSection("booking", "#booking-location");
+                scrollToSection("booking", "#booking-service");
               }}
             >
               Book a Session
@@ -103,10 +108,13 @@ export const HeroSection = ({ slides }) => {
 
         <motion.div style={{ y: badgeY }} className="lg:justify-self-end">
           <div className="glass-panel rounded-[2rem] p-5">
-            <img
+            <LazyImage
               src="/brand/warrior-lens-logo.png"
               alt="Warrior Lens brand mark"
-              className="mx-auto h-24 w-24 object-contain"
+              className="mx-auto h-24 w-24"
+              imgClassName="object-contain"
+              sizes="96px"
+              priority
             />
             <div className="mt-6 rounded-[1.5rem] border border-white/10 bg-black/25 p-5">
               <p className="text-xs uppercase tracking-[0.35em] text-accent-soft/90">

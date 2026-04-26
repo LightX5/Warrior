@@ -123,3 +123,16 @@ export const ChevronRightIcon = ({ className = "h-5 w-5" }) => (
     <path d="m9 18 6-6-6-6" />
   </svg>
 );
+
+export const PlusIcon = ({ className = "h-5 w-5" }) => (
+  <svg className={className} {...iconProps}>
+    <path d="M12 5v14" />
+    <path d="M5 12h14" />
+  </svg>
+);
+
+export const MinusIcon = ({ className = "h-5 w-5" }) => (
+  <svg className={className} {...iconProps}>
+    <path d="M5 12h14" />
+  </svg>
+);

@@ -1,9 +1,19 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { LazyImage } from "./LazyImage";
-import { ChevronLeftIcon, ChevronRightIcon, CloseIcon } from "./icons";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  CloseIcon,
+  MinusIcon,
+  PlusIcon,
+} from "./icons";
+import { scrollToSection } from "../utils/scroll";
 
 export const LightboxModal = ({ item, onClose, onNext, onPrevious }) => {
+  const [zoomLevel, setZoomLevel] = useState(1);
+  const touchStartX = useRef(null);
+
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
@@ -23,6 +33,36 @@ export const LightboxModal = ({ item, onClose, onNext, onPrevious }) => {
 
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [onClose, onNext, onPrevious]);
+
+  useEffect(() => {
+    setZoomLevel(1);
+  }, [item.id]);
+
+  const handleTouchStart = (event) => {
+    touchStartX.current = event.touches[0]?.clientX ?? null;
+  };
+
+  const handleTouchEnd = (event) => {
+    if (touchStartX.current === null || zoomLevel > 1.05) {
+      touchStartX.current = null;
+      return;
+    }
+
+    const endX = event.changedTouches[0]?.clientX ?? touchStartX.current;
+    const deltaX = endX - touchStartX.current;
+    touchStartX.current = null;
+
+    if (Math.abs(deltaX) < 70) {
+      return;
+    }
+
+    if (deltaX < 0) {
+      onNext();
+      return;
+    }
+
+    onPrevious();
+  };
 
   return (
     <motion.div
@@ -48,19 +88,28 @@ export const LightboxModal = ({ item, onClose, onNext, onPrevious }) => {
           <CloseIcon />
         </button>
 
-        <div className="relative overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.03]">
+        <div
+          className="relative overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.03]"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
           <LazyImage
             src={item.image}
             alt={item.alt}
             className="h-full min-h-[22rem] w-full"
-            imgClassName="max-h-[75vh] object-cover"
+            imgClassName="max-h-[75vh] select-none object-contain"
+            imgStyle={{ transform: `scale(${zoomLevel})`, transformOrigin: "center center" }}
+            sizes="(min-width: 1024px) 68vw, 100vw"
+            priority
           />
           <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/55 to-transparent p-6">
             <p className="text-xs font-semibold uppercase tracking-[0.35em] text-accent-soft/90">
               {item.category}
             </p>
             <h3 className="mt-2 font-display text-3xl text-white">{item.title}</h3>
-            <p className="mt-3 max-w-2xl text-sm leading-7 text-white/70">{item.description}</p>
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-white/70">
+              {item.story || item.description}
+            </p>
           </div>
         </div>
 
@@ -78,30 +127,70 @@ export const LightboxModal = ({ item, onClose, onNext, onPrevious }) => {
                 <p className="mt-2 text-base text-white">{item.date}</p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                <p className="text-xs uppercase tracking-[0.3em] text-white/45">Description</p>
-                <p className="mt-2 leading-7">{item.description}</p>
+                <p className="text-xs uppercase tracking-[0.3em] text-white/45">Story</p>
+                <p className="mt-2 leading-7">{item.story || item.description}</p>
               </div>
             </div>
           </div>
 
-          <div className="mt-6 grid grid-cols-2 gap-3">
+          <div className="mt-6 space-y-3">
+            <div className="grid grid-cols-3 gap-3">
+              <button
+                type="button"
+                className="secondary-button px-4 py-3"
+                onClick={() => setZoomLevel((current) => Math.max(1, current - 0.25))}
+                aria-label="Zoom out"
+              >
+                <MinusIcon />
+              </button>
+              <button
+                type="button"
+                className="secondary-button px-4 py-3"
+                onClick={() => setZoomLevel(1)}
+                aria-label="Reset zoom"
+              >
+                {zoomLevel.toFixed(2)}x
+              </button>
+              <button
+                type="button"
+                className="secondary-button px-4 py-3"
+                onClick={() => setZoomLevel((current) => Math.min(2.5, current + 0.25))}
+                aria-label="Zoom in"
+              >
+                <PlusIcon />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                className="secondary-button px-4 py-3"
+                onClick={onPrevious}
+                aria-label="Previous image"
+              >
+                <ChevronLeftIcon />
+                Prev
+              </button>
+              <button
+                type="button"
+                className="primary-button px-4 py-3"
+                onClick={onNext}
+                aria-label="Next image"
+              >
+                Next
+                <ChevronRightIcon />
+              </button>
+            </div>
+
             <button
               type="button"
-              className="secondary-button px-4 py-3"
-              onClick={onPrevious}
-              aria-label="Previous image"
+              className="primary-button w-full px-4 py-3"
+              onClick={() => {
+                onClose();
+                scrollToSection("booking", "#booking-service");
+              }}
             >
-              <ChevronLeftIcon />
-              Prev
-            </button>
-            <button
-              type="button"
-              className="primary-button px-4 py-3"
-              onClick={onNext}
-              aria-label="Next image"
-            >
-              Next
-              <ChevronRightIcon />
+              Book a Similar Session
             </button>
           </div>
         </div>

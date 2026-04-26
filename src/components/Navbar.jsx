@@ -1,27 +1,53 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { navigationSections } from "../config/site";
+import { LazyImage } from "./LazyImage";
 import { CloseIcon, MenuIcon } from "./icons";
 import { scrollToSection } from "../utils/scroll";
 
 export const Navbar = ({ activeSection }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 24);
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleSectionClick = (event, sectionId) => {
     event.preventDefault();
-    scrollToSection(sectionId, sectionId === "booking" ? "#booking-location" : undefined);
+    scrollToSection(sectionId, sectionId === "booking" ? "#booking-service" : undefined);
     setMobileOpen(false);
   };
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b border-white/8 bg-black/35 backdrop-blur-xl">
+      <header
+        className={`sticky top-0 z-50 w-full border-b transition duration-300 ${
+          isScrolled
+            ? "border-white/10 bg-black/55 shadow-[0_16px_40px_rgba(0,0,0,0.32)] backdrop-blur-2xl"
+            : "border-white/8 bg-black/30 backdrop-blur-xl"
+        }`}
+      >
         <div className="section-shell flex h-20 items-center justify-between gap-4">
-          <a href="#home" className="inline-flex items-center gap-3">
-            <img
+          <a
+            href="#home"
+            className="inline-flex items-center gap-3"
+            onClick={(event) => handleSectionClick(event, "home")}
+          >
+            <LazyImage
               src="/brand/warrior-lens-logo.png"
               alt="Warrior Lens logo"
-              className="h-11 w-11 rounded-2xl object-cover"
+              className="h-11 w-11 rounded-2xl"
+              imgClassName="rounded-2xl object-cover"
+              sizes="44px"
+              priority
             />
             <div>
               <p className="font-display text-2xl leading-none text-white">Warrior Lens</p>

@@ -14,5 +14,26 @@ export default defineConfig({
   },
   build: {
     outDir: "dist",
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes("node_modules")) {
+            return;
+          }
+
+          if (id.includes("framer-motion")) {
+            return "motion";
+          }
+
+          if (id.includes("react-helmet-async")) {
+            return "seo";
+          }
+
+          if (id.includes("react")) {
+            return "react-vendor";
+          }
+        },
+      },
+    },
   },
 });

@@ -1,9 +1,0 @@
-{
-  "redirects": [
-    {
-      "source": "/(.*)",
-      "destination": "https://warriorlensstudio.vercel.app/$1",
-      "permanent": true
-    }
-  ]
-}

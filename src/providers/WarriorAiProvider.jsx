@@ -1,5 +1,9 @@
 import { createContext, useEffect, useMemo, useRef, useState } from "react";
-import { buildWarriorAiReply, createWarriorAiGreeting } from "../data/warriorAi";
+import {
+  buildWarriorAiReply,
+  createWarriorAiGreeting,
+  getWarriorAiRouteContext,
+} from "../data/warriorAi";
 import { useStudioNavigation } from "../hooks/useStudioNavigation";
 import { useStudioRoute } from "../hooks/useStudioRoute";
 
@@ -14,13 +18,26 @@ export const WarriorAiProvider = ({ children }) => {
   const { pathname } = useStudioRoute();
   const { navigate, startBookingFlow } = useStudioNavigation();
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState(() => [createMessage(createWarriorAiGreeting())]);
+  const [messages, setMessages] = useState(() => [createMessage(createWarriorAiGreeting(pathname))]);
   const [inputValue, setInputValue] = useState("");
   const [isThinking, setIsThinking] = useState(false);
   const thinkingTimeoutRef = useRef(null);
+  const routeContext = useMemo(() => getWarriorAiRouteContext(pathname), [pathname]);
 
   useEffect(() => {
     setIsOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    setMessages((current) => {
+      const hasOnlyGreeting = current.length === 1 && current[0]?.role === "assistant";
+
+      if (!hasOnlyGreeting) {
+        return current;
+      }
+
+      return [createMessage(createWarriorAiGreeting(pathname))];
+    });
   }, [pathname]);
 
   useEffect(
@@ -47,7 +64,7 @@ export const WarriorAiProvider = ({ children }) => {
 
     setIsThinking(false);
     setInputValue("");
-    setMessages([createMessage(createWarriorAiGreeting())]);
+    setMessages([createMessage(createWarriorAiGreeting(pathname))]);
   };
 
   const handleRouteAction = (action) => {
@@ -79,7 +96,7 @@ export const WarriorAiProvider = ({ children }) => {
 
     setMessages((current) => [...current, createMessage({ role: "user", text: trimmedValue })]);
     setInputValue("");
-    pushAssistantReply(buildWarriorAiReply(trimmedValue));
+    pushAssistantReply(buildWarriorAiReply(trimmedValue, pathname));
   };
 
   const handleActionClick = (action) => {
@@ -97,6 +114,7 @@ export const WarriorAiProvider = ({ children }) => {
       messages,
       inputValue,
       isThinking,
+      routeContext,
       setInputValue,
       closeChat,
       toggleChat,
@@ -104,7 +122,7 @@ export const WarriorAiProvider = ({ children }) => {
       submitUserMessage,
       handleActionClick,
     }),
-    [inputValue, isOpen, isThinking, messages]
+    [inputValue, isOpen, isThinking, messages, pathname, routeContext]
   );
 
   return <WarriorAiContext.Provider value={value}>{children}</WarriorAiContext.Provider>;

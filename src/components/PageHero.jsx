@@ -38,7 +38,7 @@ export const PageHero = ({
                   <button
                     key={action.label}
                     type="button"
-                    className={classes}
+                    className={`${classes} w-full justify-center sm:w-auto`}
                     onClick={action.onClick}
                   >
                     {action.label}

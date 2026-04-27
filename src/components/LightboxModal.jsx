@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import { FLOATING_UI, MOTION_PRESETS } from "../config/ui";
 import { LazyImage } from "./LazyImage";
 import {
   ChevronLeftIcon,
@@ -65,14 +66,16 @@ export const LightboxModal = ({ item, onClose, onNext, onPrevious, onBookSimilar
 
   return (
     <motion.div
-      className="fixed inset-0 z-[90] flex items-center justify-center bg-black/90 px-4 py-6 backdrop-blur-xl"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[90] flex items-center justify-center bg-black/90 px-3 pt-[var(--lightbox-top-padding)] pb-[var(--lightbox-bottom-padding)] backdrop-blur-xl sm:px-4 sm:py-6"
+      style={{
+        "--lightbox-top-padding": FLOATING_UI.mobileModalTopPadding,
+        "--lightbox-bottom-padding": FLOATING_UI.mobileModalBottomPadding,
+      }}
+      {...MOTION_PRESETS.overlay}
       onClick={onClose}
     >
       <motion.div
-        className="relative grid max-h-full w-full max-w-6xl gap-4 overflow-hidden rounded-[2rem] border border-white/10 bg-[#0b0b0b] p-4 shadow-luxe lg:grid-cols-[1fr_20rem]"
+        className="relative grid max-h-full w-full max-w-6xl gap-4 overflow-y-auto overscroll-contain rounded-[2rem] border border-white/10 bg-[#0b0b0b] p-3 shadow-luxe sm:p-4 lg:grid-cols-[1fr_20rem]"
         initial={{ y: 24, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 18, opacity: 0 }}
@@ -80,7 +83,7 @@ export const LightboxModal = ({ item, onClose, onNext, onPrevious, onBookSimilar
       >
         <button
           type="button"
-          className="absolute right-4 top-4 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-black/55 text-white transition hover:border-white/25 hover:bg-black/75"
+          className="absolute right-3 top-3 z-10 inline-flex h-11 w-11 touch-manipulation items-center justify-center rounded-full border border-white/10 bg-black/55 text-white transition active:scale-[0.98] hover:border-white/25 hover:bg-black/75 sm:right-4 sm:top-4"
           onClick={onClose}
           aria-label="Close image viewer"
         >
@@ -136,10 +139,10 @@ export const LightboxModal = ({ item, onClose, onNext, onPrevious, onBookSimilar
             <div className="grid grid-cols-3 gap-3">
               <button
                 type="button"
-                className="secondary-button px-4 py-3"
-                onClick={() => setZoomLevel((current) => Math.max(1, current - 0.25))}
-                aria-label="Zoom out"
-              >
+            className="secondary-button px-4 py-3"
+            onClick={() => setZoomLevel((current) => Math.max(1, current - 0.25))}
+            aria-label="Zoom out"
+          >
                 <MinusIcon />
               </button>
               <button

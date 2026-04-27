@@ -111,7 +111,7 @@ export const ContactSection = ({
                 rel="noreferrer"
                 className="glass-panel rounded-[1.75rem] p-6 transition hover:-translate-y-1"
               >
-                <div className="inline-flex rounded-2xl border border-white/10 bg-white/5 p-3 text-accent-soft">
+                <div className="inline-flex rounded-2xl border border-[#25D366]/20 bg-[#25D366]/12 p-3 text-[#25D366]">
                   <WhatsAppIcon />
                 </div>
                 <p className="mt-5 text-xs uppercase tracking-[0.35em] text-white/45">WhatsApp</p>

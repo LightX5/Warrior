@@ -9,11 +9,14 @@
 
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+    -webkit-tap-highlight-color: transparent;
   }
 
   body {
     @apply bg-canvas font-body text-white antialiased;
     min-height: 100vh;
+    overflow-x: hidden;
     background-image:
       radial-gradient(circle at top left, rgba(255, 255, 255, 0.06), transparent 22%),
       radial-gradient(circle at top right, rgba(213, 179, 89, 0.12), transparent 30%),
@@ -70,15 +73,15 @@
   }
 
   .primary-button {
-    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-accent/60 bg-accent px-6 py-3 text-sm font-semibold text-black shadow-[0_14px_36px_rgba(213,179,89,0.14)] transition duration-300 hover:-translate-y-1 hover:border-accent-soft hover:bg-accent-soft hover:shadow-[0_22px_44px_rgba(213,179,89,0.24)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-soft/70 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas;
+    @apply inline-flex min-h-12 select-none touch-manipulation items-center justify-center gap-2 rounded-full border border-accent/60 bg-accent px-6 py-3 text-sm font-semibold text-black shadow-[0_14px_36px_rgba(213,179,89,0.14)] transition duration-300 active:scale-[0.985] hover:-translate-y-1 hover:border-accent-soft hover:bg-accent-soft hover:shadow-[0_22px_44px_rgba(213,179,89,0.24)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-soft/70 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas sm:min-h-11;
   }
 
   .secondary-button {
-    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-white shadow-[0_10px_28px_rgba(0,0,0,0.2)] transition duration-300 hover:-translate-y-1 hover:border-accent/60 hover:bg-white/10 hover:shadow-[0_18px_38px_rgba(0,0,0,0.28)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-soft/55 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas;
+    @apply inline-flex min-h-12 select-none touch-manipulation items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-white shadow-[0_10px_28px_rgba(0,0,0,0.2)] transition duration-300 active:scale-[0.985] hover:-translate-y-1 hover:border-accent/60 hover:bg-white/10 hover:shadow-[0_18px_38px_rgba(0,0,0,0.28)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-soft/55 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas sm:min-h-11;
   }
 
   .field-input {
-    @apply w-full rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white outline-none transition duration-200 placeholder:text-white/35 focus:border-accent/60 focus:bg-white/[0.06];
+    @apply min-h-12 w-full rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white outline-none transition duration-200 placeholder:text-white/35 focus:border-accent/60 focus:bg-white/[0.06] sm:min-h-11;
   }
 
   .field-label {
@@ -94,13 +97,13 @@
   }
 
   .masonry-grid {
-    column-gap: 1.25rem;
+    column-gap: 0.9rem;
     column-count: 1;
   }
 
   .masonry-item {
     break-inside: avoid;
-    margin-bottom: 1.25rem;
+    margin-bottom: 0.9rem;
   }
 
   .mask-fade-bottom {
@@ -109,7 +112,12 @@
 
   @media (min-width: 768px) {
     .masonry-grid {
+      column-gap: 1.25rem;
       column-count: 2;
+    }
+
+    .masonry-item {
+      margin-bottom: 1.25rem;
     }
   }
 

@@ -26,7 +26,7 @@ export const FeaturedWorksSection = ({
         <div className="mt-10 grid gap-5 xl:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
           <button
             type="button"
-            className="group glass-panel relative overflow-hidden rounded-[2rem] text-left"
+            className="group glass-panel relative overflow-hidden rounded-[2rem] text-left transition active:scale-[0.992]"
             onClick={() => onOpenLightbox(leadItem.id)}
           >
             <LazyImage
@@ -52,7 +52,7 @@ export const FeaturedWorksSection = ({
               <motion.button
                 key={item.id}
                 type="button"
-                className="group glass-panel relative overflow-hidden rounded-[1.8rem] text-left"
+                className="group glass-panel relative overflow-hidden rounded-[1.8rem] text-left transition active:scale-[0.992]"
                 onClick={() => onOpenLightbox(item.id)}
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -88,11 +88,19 @@ export const FeaturedWorksSection = ({
               </h3>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
-              <button type="button" className="secondary-button" onClick={onBrowsePortfolio}>
+              <button
+                type="button"
+                className="secondary-button w-full justify-center sm:w-auto"
+                onClick={onBrowsePortfolio}
+              >
                 View Full Portfolio
                 <ArrowRightIcon />
               </button>
-              <button type="button" className="primary-button" onClick={onBookSession}>
+              <button
+                type="button"
+                className="primary-button w-full justify-center sm:w-auto"
+                onClick={onBookSession}
+              >
                 Book a Session
                 <ArrowRightIcon />
               </button>

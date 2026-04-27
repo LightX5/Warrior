@@ -5,17 +5,98 @@ const suggestedRoutes = {
   contact: { label: "Contact Studio", type: "route", value: "/contact" },
 };
 
-export const createWarriorAiGreeting = () => ({
-  role: "assistant",
-  text:
-    "Hi, I'm Warrior AI. I can help you find the right Warrior Lens experience and point you to the best next step. What kind of shoot are you thinking about?",
-  actions: [
-    { label: "Portraits", type: "prompt", value: "Portraits" },
-    { label: "Events", type: "prompt", value: "Events" },
-    { label: "Creative Shoots", type: "prompt", value: "Creative Shoots" },
-    { label: "Documentary", type: "prompt", value: "Documentary" },
-  ],
-});
+const shootPrompts = [
+  { label: "Portraits", type: "prompt", value: "Portraits" },
+  { label: "Events", type: "prompt", value: "Events" },
+  { label: "Creative Shoots", type: "prompt", value: "Creative Shoots" },
+  { label: "Documentary", type: "prompt", value: "Documentary" },
+];
+
+const warriorAiRouteContexts = {
+  "/": {
+    panelTitle: "Studio Guide",
+    panelCopy:
+      "A premium preview assistant for helping visitors move toward the right next step.",
+    launcherCopy: "Ask about shoots, pricing, or next steps",
+    placeholder: "Tell Warrior AI the kind of shoot you want...",
+    greeting:
+      "Hi, I'm Warrior AI. I can help you find the right Warrior Lens experience and point you to the best next step. What kind of shoot are you thinking about?",
+    actions: shootPrompts,
+  },
+  "/portfolio": {
+    panelTitle: "Portfolio Guide",
+    panelCopy:
+      "Use the work on this page to narrow your mood, then move naturally into booking when you're ready.",
+    launcherCopy: "Need help choosing the right style or collection?",
+    placeholder: "Tell Warrior AI the mood or type of work you want...",
+    greeting:
+      "You're viewing the portfolio. Tell me the kind of mood, coverage, or story you want, and I'll point you to the strongest next step.",
+    actions: [
+      { label: "Portrait Mood", type: "prompt", value: "Portraits" },
+      { label: "Event Coverage", type: "prompt", value: "Events" },
+      suggestedRoutes.booking,
+      suggestedRoutes.services,
+    ],
+  },
+  "/services": {
+    panelTitle: "Services Guide",
+    panelCopy:
+      "I can help you narrow the right offer before you move into the booking consultation.",
+    launcherCopy: "Need help choosing the right service?",
+    placeholder: "Ask Warrior AI which service fits your session...",
+    greeting:
+      "You're on the services page. Tell me the type of session you're considering, and I'll help you narrow the right offer and next step.",
+    actions: [
+      { label: "Portrait Service", type: "prompt", value: "Portraits" },
+      { label: "Event Service", type: "prompt", value: "Events" },
+      { label: "Creative Service", type: "prompt", value: "Creative Shoots" },
+      { label: "Documentary Service", type: "prompt", value: "Documentary" },
+    ],
+  },
+  "/booking": {
+    panelTitle: "Booking Assistant",
+    panelCopy:
+      "I can help clarify service type, date planning, or what to include in your booking brief.",
+    launcherCopy: "Need help choosing a service or planning the brief?",
+    placeholder: "Ask Warrior AI about service, date, location, or your brief...",
+    greeting:
+      "You're already in the booking flow. If you want help choosing a service, duration, or what to write in your brief, I can guide you before you submit.",
+    actions: [
+      { label: "Pricing Help", type: "prompt", value: "Pricing" },
+      { label: "Portrait Booking", type: "prompt", value: "Portraits" },
+      { label: "Event Booking", type: "prompt", value: "Events" },
+      suggestedRoutes.contact,
+    ],
+  },
+  "/contact": {
+    panelTitle: "Contact Assistant",
+    panelCopy:
+      "I can point you to the fastest channel or move you into the booking consultation if you're ready.",
+    launcherCopy: "Need the fastest way to reach the studio?",
+    placeholder: "Ask Warrior AI about contact options or booking...",
+    greeting:
+      "You're on the contact page. If you want the fastest path, I can point you toward WhatsApp, direct contact, or the full booking consultation.",
+    actions: [
+      { label: "WhatsApp", type: "prompt", value: "WhatsApp" },
+      { label: "Email", type: "prompt", value: "Email contact" },
+      suggestedRoutes.booking,
+      suggestedRoutes.services,
+    ],
+  },
+};
+
+export const getWarriorAiRouteContext = (pathname = "/") =>
+  warriorAiRouteContexts[pathname] ?? warriorAiRouteContexts["/"];
+
+export const createWarriorAiGreeting = (pathname = "/") => {
+  const routeContext = getWarriorAiRouteContext(pathname);
+
+  return {
+    role: "assistant",
+    text: routeContext.greeting,
+    actions: routeContext.actions,
+  };
+};
 
 const shootReplies = {
   portraits: {
@@ -64,14 +145,14 @@ const detectShootType = (value) => {
   return null;
 };
 
-export const buildWarriorAiReply = (userInput) => {
+export const buildWarriorAiReply = (userInput, pathname = "/") => {
   const input = normalize(userInput);
 
   if (!input || includesAny(input, ["hi", "hello", "hey"])) {
     return {
       text:
         "Glad you're here. Tell me the kind of shoot you want, and I'll point you toward the best next step.",
-      actions: createWarriorAiGreeting().actions,
+      actions: createWarriorAiGreeting(pathname).actions,
     };
   }
 

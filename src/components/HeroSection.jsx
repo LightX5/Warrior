@@ -61,11 +61,19 @@ export const HeroSection = ({ slides, onViewPortfolio, onBookSession }) => {
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <button type="button" className="primary-button" onClick={onViewPortfolio}>
+            <button
+              type="button"
+              className="primary-button w-full justify-center sm:w-auto"
+              onClick={onViewPortfolio}
+            >
               View Portfolio
               <ArrowRightIcon />
             </button>
-            <button type="button" className="secondary-button" onClick={onBookSession}>
+            <button
+              type="button"
+              className="secondary-button w-full justify-center sm:w-auto"
+              onClick={onBookSession}
+            >
               Book a Session
             </button>
           </div>

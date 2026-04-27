@@ -1,6 +1,8 @@
 import { siteConfig } from "../config/site";
+import { FLOATING_UI } from "../config/ui";
 import { useStudioNavigation } from "../hooks/useStudioNavigation";
 import { useStudioRoute } from "../hooks/useStudioRoute";
+import { preloadStudioPage } from "../pages/pageRegistry";
 import { studioRoutes } from "../pages/routes";
 
 export const Footer = () => {
@@ -8,7 +10,10 @@ export const Footer = () => {
   const { navigate, startBookingFlow } = useStudioNavigation();
 
   return (
-    <footer className="border-t border-white/10 py-10 pb-28 lg:pb-10">
+    <footer
+      className="border-t border-white/10 py-10 pb-[var(--footer-mobile-padding)] lg:pb-10"
+      style={{ "--footer-mobile-padding": FLOATING_UI.mobileFooterBottomPadding }}
+    >
       <div className="section-shell grid gap-8 lg:grid-cols-[minmax(0,1fr)_auto_auto] lg:items-start">
         <div className="max-w-md">
           <p className="font-display text-3xl text-white">Warrior Lens</p>
@@ -30,6 +35,8 @@ export const Footer = () => {
                 event.preventDefault();
                 navigate(route.path);
               }}
+              onMouseEnter={() => preloadStudioPage(route.path)}
+              onFocus={() => preloadStudioPage(route.path)}
               className={`transition ${
                 pathname === route.path ? "text-white" : "text-white/55 hover:text-white"
               }`}
@@ -46,7 +53,11 @@ export const Footer = () => {
           >
             {siteConfig.email}
           </a>
-          <button type="button" className="primary-button" onClick={startBookingFlow}>
+          <button
+            type="button"
+            className="primary-button w-full justify-center sm:w-auto"
+            onClick={startBookingFlow}
+          >
             Book a Session
           </button>
         </div>

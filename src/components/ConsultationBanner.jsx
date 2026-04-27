@@ -19,13 +19,21 @@ export const ConsultationBanner = ({
 
           <div className="flex flex-col gap-3 sm:flex-row">
             {secondaryAction ? (
-              <button type="button" className="secondary-button" onClick={secondaryAction.onClick}>
+              <button
+                type="button"
+                className="secondary-button w-full justify-center sm:w-auto"
+                onClick={secondaryAction.onClick}
+              >
                 {secondaryAction.label}
                 <ArrowRightIcon />
               </button>
             ) : null}
             {primaryAction ? (
-              <button type="button" className="primary-button" onClick={primaryAction.onClick}>
+              <button
+                type="button"
+                className="primary-button w-full justify-center sm:w-auto"
+                onClick={primaryAction.onClick}
+              >
                 {primaryAction.label}
                 <ArrowRightIcon />
               </button>

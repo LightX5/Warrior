@@ -40,37 +40,43 @@ export const PortfolioSection = ({
               href={siteConfig.portfolioUrl}
               target="_blank"
               rel="noreferrer"
-              className="primary-button"
+              className="primary-button w-full justify-center sm:w-auto"
             >
               Open Full Portfolio
             </a>
             {onCheckAvailability ? (
-              <button type="button" className="secondary-button" onClick={onCheckAvailability}>
+              <button
+                type="button"
+                className="secondary-button w-full justify-center sm:w-auto"
+                onClick={onCheckAvailability}
+              >
                 Check Availability
               </button>
             ) : null}
           </div>
         ) : null}
 
-        <div className="mt-10 flex flex-wrap gap-3">
-          {portfolioCategories.map((category) => (
-            <button
-              key={category}
-              type="button"
-              className={`rounded-full border px-4 py-2 text-sm transition ${
-                activeFilter === category
-                  ? "border-accent bg-accent text-black"
-                  : "border-white/10 bg-white/5 text-white/65 hover:border-white/20 hover:text-white"
-              }`}
-              onClick={() => {
-                startTransition(() => {
-                  setActiveFilter(category);
-                });
-              }}
-            >
-              {category}
-            </button>
-          ))}
+        <div className="-mx-1 mt-10 overflow-x-auto pb-2">
+          <div className="flex min-w-max gap-3 px-1 sm:min-w-0 sm:flex-wrap">
+            {portfolioCategories.map((category) => (
+              <button
+                key={category}
+                type="button"
+                className={`min-h-11 shrink-0 touch-manipulation rounded-full border px-4 py-2 text-sm transition active:scale-[0.985] ${
+                  activeFilter === category
+                    ? "border-accent bg-accent text-black"
+                    : "border-white/10 bg-white/5 text-white/65 hover:border-white/20 hover:text-white"
+                }`}
+                onClick={() => {
+                  startTransition(() => {
+                    setActiveFilter(category);
+                  });
+                }}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="mt-10 masonry-grid">
@@ -87,7 +93,7 @@ export const PortfolioSection = ({
               >
                 <button
                   type="button"
-                  className="group glass-panel block w-full overflow-hidden rounded-[1.75rem] text-left"
+                  className="group glass-panel block w-full touch-manipulation overflow-hidden rounded-[1.75rem] text-left transition active:scale-[0.992]"
                   onClick={() => onOpenLightbox(item.id)}
                 >
                   <div className="relative overflow-hidden">
@@ -106,7 +112,7 @@ export const PortfolioSection = ({
                       </span>
                     </div>
                   </div>
-                  <div className="space-y-3 p-5 sm:p-6">
+                    <div className="space-y-3 p-4 sm:p-6">
                     <div className="flex flex-wrap items-center gap-3">
                       <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[0.68rem] uppercase tracking-[0.28em] text-accent-soft/90">
                         {item.category}

@@ -465,7 +465,7 @@ export const BookingSection = ({
                           href={siteConfig.whatsappUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="secondary-button mt-6 w-full justify-center"
+                          className="secondary-button mt-6 w-full justify-center border-[#25D366]/25 text-[#25D366] hover:border-[#25D366]/45 hover:bg-[#25D366]/10"
                         >
                           <WhatsAppIcon className="h-4 w-4" />
                           Chat on WhatsApp

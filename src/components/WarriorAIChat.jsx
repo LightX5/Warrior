@@ -202,8 +202,8 @@ export const WarriorAIChat = () => {
               <div className="mt-4 flex items-start gap-2 text-xs leading-6 text-white/42">
                 <SparklesIcon className="mt-0.5 h-4 w-4 text-accent-soft/75" />
                 <p>
-                  Warrior AI is currently a premium UI preview. Future versions can connect directly
-                  to a real assistant for {siteConfig.brandName}.
+                  Warrior AI can help with shoot direction, services, and next steps. Final
+                  availability and quoting still go through the booking flow for {siteConfig.brandName}.
                 </p>
               </div>
             </div>

@@ -6,6 +6,7 @@ import {
 } from "../data/warriorAi";
 import { useStudioNavigation } from "../hooks/useStudioNavigation";
 import { useStudioRoute } from "../hooks/useStudioRoute";
+import { requestWarriorAiReply } from "../services/warriorAiService";
 
 export const WarriorAiContext = createContext(null);
 
@@ -21,10 +22,12 @@ export const WarriorAiProvider = ({ children }) => {
   const [messages, setMessages] = useState(() => [createMessage(createWarriorAiGreeting(pathname))]);
   const [inputValue, setInputValue] = useState("");
   const [isThinking, setIsThinking] = useState(false);
-  const thinkingTimeoutRef = useRef(null);
+  const requestIdRef = useRef(0);
   const routeContext = useMemo(() => getWarriorAiRouteContext(pathname), [pathname]);
 
   useEffect(() => {
+    requestIdRef.current += 1;
+    setIsThinking(false);
     setIsOpen(false);
   }, [pathname]);
 
@@ -40,15 +43,6 @@ export const WarriorAiProvider = ({ children }) => {
     });
   }, [pathname]);
 
-  useEffect(
-    () => () => {
-      if (thinkingTimeoutRef.current) {
-        window.clearTimeout(thinkingTimeoutRef.current);
-      }
-    },
-    []
-  );
-
   const closeChat = () => {
     setIsOpen(false);
   };
@@ -58,10 +52,7 @@ export const WarriorAiProvider = ({ children }) => {
   };
 
   const resetConversation = () => {
-    if (thinkingTimeoutRef.current) {
-      window.clearTimeout(thinkingTimeoutRef.current);
-    }
-
+    requestIdRef.current += 1;
     setIsThinking(false);
     setInputValue("");
     setMessages([createMessage(createWarriorAiGreeting(pathname))]);
@@ -79,24 +70,52 @@ export const WarriorAiProvider = ({ children }) => {
     }
   };
 
-  const pushAssistantReply = (content) => {
+  const pushAssistantReply = async ({ message, history }) => {
+    const requestId = requestIdRef.current + 1;
+    requestIdRef.current = requestId;
     setIsThinking(true);
 
-    thinkingTimeoutRef.current = window.setTimeout(() => {
-      setMessages((current) => [...current, createMessage({ role: "assistant", ...content })]);
-      setIsThinking(false);
-    }, 650);
+    try {
+      const reply = await requestWarriorAiReply({ message, history });
+
+      if (requestId !== requestIdRef.current) {
+        return;
+      }
+
+      setMessages((current) => [...current, createMessage({ role: "assistant", text: reply })]);
+    } catch (error) {
+      if (requestId !== requestIdRef.current) {
+        return;
+      }
+
+      const fallbackReply = buildWarriorAiReply(message, pathname);
+
+      setMessages((current) => [
+        ...current,
+        createMessage({
+          role: "assistant",
+          text: fallbackReply.text,
+          actions: fallbackReply.actions,
+        }),
+      ]);
+    } finally {
+      if (requestId === requestIdRef.current) {
+        setIsThinking(false);
+      }
+    }
   };
 
-  const submitUserMessage = (rawValue) => {
+  const submitUserMessage = async (rawValue) => {
     const trimmedValue = rawValue.trim();
     if (!trimmedValue || isThinking) {
       return;
     }
 
+    const history = messages.map(({ role, text }) => ({ role, text }));
+
     setMessages((current) => [...current, createMessage({ role: "user", text: trimmedValue })]);
     setInputValue("");
-    pushAssistantReply(buildWarriorAiReply(trimmedValue, pathname));
+    await pushAssistantReply({ message: trimmedValue, history });
   };
 
   const handleActionClick = (action) => {

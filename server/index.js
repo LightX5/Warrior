@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import bookingRoutes from "./routes/bookingRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
+import warriorAiRoutes from "./routes/warriorAiRoutes.js";
 import { connectDB } from "./config/db.js";
 import { errorHandler, notFound } from "./middleware/errorHandler.js";
 
@@ -47,6 +48,7 @@ export const createServerApp = () => {
 
   app.use("/api/bookings", apiCors, bookingRoutes);
   app.use("/api/contact", apiCors, contactRoutes);
+  app.use("/api/warrior-ai", apiCors, warriorAiRoutes);
 
   if (process.env.NODE_ENV === "production") {
     app.use(express.static(distPath));

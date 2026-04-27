@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
 import { services } from "../data/services";
-import { scrollToSection } from "../utils/scroll";
 import { SectionHeading } from "./SectionHeading";
 import {
   ArrowRightIcon,
@@ -19,17 +18,20 @@ const iconMap = {
   sparkles: SparklesIcon,
 };
 
-export const ServicesSection = () => (
+export const ServicesSection = ({
+  eyebrow = "Services",
+  title = "Purposeful offerings built for portraits, occasions, concepts, and post-production.",
+  copy = "Each service is presented with enough structure for clients today and enough flexibility for future payment, package, and admin tooling.",
+  limit = services.length,
+  showCtaCard = true,
+  onBookSession,
+}) => (
   <section id="services" className="section-block">
     <div className="section-shell">
-      <SectionHeading
-        eyebrow="Services"
-        title="Purposeful offerings built for portraits, occasions, concepts, and post-production."
-        copy="Each service is presented with enough structure for clients today and enough flexibility for future payment, package, and admin tooling."
-      />
+      <SectionHeading eyebrow={eyebrow} title={title} copy={copy} />
 
       <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-        {services.map((service, index) => {
+        {services.slice(0, limit).map((service, index) => {
           const Icon = iconMap[service.icon];
 
           return (
@@ -57,29 +59,31 @@ export const ServicesSection = () => (
         })}
       </div>
 
-      <div className="glass-panel mt-8 rounded-[1.9rem] p-6 sm:p-7">
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-          <div className="max-w-2xl">
-            <p className="section-eyebrow mb-3">Ready to Book?</p>
-            <h3 className="font-display text-3xl text-white sm:text-4xl">
-              Turn interest into a checked date and a real consultation.
-            </h3>
-            <p className="mt-4 text-sm leading-7 text-white/68">
-              Use the booking flow to select the service, date, location, and shoot brief in a
-              way that feels tailored rather than generic.
-            </p>
-          </div>
+      {showCtaCard && onBookSession ? (
+        <div className="glass-panel mt-8 rounded-[1.9rem] p-6 sm:p-7">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+            <div className="max-w-2xl">
+              <p className="section-eyebrow mb-3">Ready to Book?</p>
+              <h3 className="font-display text-3xl text-white sm:text-4xl">
+                Turn interest into a checked date and a real consultation.
+              </h3>
+              <p className="mt-4 text-sm leading-7 text-white/68">
+                Use the booking flow to select the service, date, location, and shoot brief in a
+                way that feels tailored rather than generic.
+              </p>
+            </div>
 
-          <button
-            type="button"
-            className="primary-button w-full justify-center sm:w-auto"
-            onClick={() => scrollToSection("booking", "#booking-service")}
-          >
-            Check Availability
-            <ArrowRightIcon />
-          </button>
+            <button
+              type="button"
+              className="primary-button w-full justify-center sm:w-auto"
+              onClick={onBookSession}
+            >
+              Check Availability
+              <ArrowRightIcon />
+            </button>
+          </div>
         </div>
-      </div>
+      ) : null}
     </div>
   </section>
 );

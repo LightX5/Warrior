@@ -1,10 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { siteConfig } from "../config/site";
+import { durationOptions, locationSuggestions } from "../data/bookingFlow";
+import { useBookingFlow } from "../hooks/useBookingFlow";
 import { services } from "../data/services";
-import { postBooking } from "../lib/api";
-import { getLocalDateInputMin } from "../utils/date";
-import { validateBookingForm } from "../utils/validation";
 import { FeedbackModal } from "./FeedbackModal";
 import { SectionHeading } from "./SectionHeading";
 import {
@@ -26,236 +24,51 @@ const iconMap = {
   calendar: CalendarIcon,
   camera: CameraIcon,
   film: FilmIcon,
+  mapPin: MapPinIcon,
+  phone: PhoneIcon,
   sparkles: SparklesIcon,
 };
 
-const bookingStorageKey = "warrior-lens-booking-progress-v4";
+const getFieldClassName = (hasError, extraClasses = "") =>
+  `field-input ${hasError ? "field-input-error" : ""} ${extraClasses}`.trim();
 
-const initialValues = {
-  name: "",
-  email: "",
-  phone: "",
-  service: "",
-  duration: "",
-  date: "",
-  location: "",
-  message: "",
-};
-
-const locationSuggestions = ["Lagos", "Studio Session", "OAU Campus", "Destination Shoot"];
-
-const durationOptions = [
-  { value: "1 hour", label: "1 Hour", detail: "Short portraits, minis, or tightly directed sessions." },
-  { value: "2 hours", label: "2 Hours", detail: "A strong middle ground for portraits, grads, and concept sets." },
-  { value: "4 hours", label: "Half Day", detail: "For event highlights, layered storytelling, or multiple looks." },
-  { value: "8 hours", label: "Full Day", detail: "Best for weddings, conferences, and deeper documentary coverage." },
-  { value: "Custom scope", label: "Custom", detail: "For campaigns, travel, production-heavy, or multi-location shoots." },
-];
-
-const bookingSteps = [
-  {
-    id: "service",
-    shortLabel: "Service",
-    eyebrow: "Step 1",
-    title: "Select the service you want to book.",
-    copy: "Choose the kind of coverage you need and how long you expect it to run.",
-    fields: ["service", "duration"],
-  },
-  {
-    id: "schedule",
-    shortLabel: "Date",
-    eyebrow: "Step 2",
-    title: "Choose the date and location.",
-    copy: "Share the preferred date and where the session should happen so availability can be checked properly.",
-    fields: ["date", "location"],
-  },
-  {
-    id: "details",
-    shortLabel: "Details",
-    eyebrow: "Step 3",
-    title: "Enter your details and the shoot brief.",
-    copy: "This is where Warrior Lens learns who to reply to and what kind of experience you want created.",
-    fields: ["name", "email", "phone", "message"],
-  },
-  {
-    id: "review",
-    shortLabel: "Review",
-    eyebrow: "Step 4",
-    title: "Review everything before you continue.",
-    copy: "This review step makes the booking feel more like a premium consultation than a generic form.",
-    fields: [],
-  },
-  {
-    id: "submit",
-    shortLabel: "Submit",
-    eyebrow: "Step 5",
-    title: "Send the request and lock in the consultation.",
-    copy: "Submit when the summary looks right. The request will be saved and delivered to the studio inbox.",
-    fields: [],
-  },
-];
-
-const stepFieldSet = new Set(bookingSteps.flatMap((step) => step.fields));
-
-const formatDisplayDate = (value) => {
-  if (!value) {
-    return "Pending";
-  }
-
-  return new Intl.DateTimeFormat("en-NG", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  }).format(new Date(`${value}T00:00:00`));
-};
-
-const getStepErrors = (step, values) => {
-  const fullErrors = validateBookingForm(values);
-
-  return step.fields.reduce((collected, field) => {
-    if (fullErrors[field]) {
-      collected[field] = fullErrors[field];
-    }
-
-    return collected;
-  }, {});
-};
-
-const buildSummary = (values) => [
-  { label: "Service", value: values.service || "Pending", icon: CameraIcon },
-  { label: "Duration", value: values.duration || "Pending", icon: SparklesIcon },
-  { label: "Preferred Date", value: formatDisplayDate(values.date), icon: CalendarIcon },
-  { label: "Location", value: values.location || "Pending", icon: MapPinIcon },
-  { label: "Contact", value: values.name || values.email || "Pending", icon: PhoneIcon },
-];
-
-export const BookingSection = () => {
-  const [formData, setFormData] = useState(initialValues);
-  const [errors, setErrors] = useState({});
-  const [activeStep, setActiveStep] = useState(0);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [submitError, setSubmitError] = useState("");
-  const [successMessage, setSuccessMessage] = useState(
-    "Your booking request has been submitted to Warrior Lens Studio."
-  );
-  const [hasRestoredDraft, setHasRestoredDraft] = useState(false);
-
-  const currentStep = bookingSteps[activeStep];
-  const minBookingDate = useMemo(() => getLocalDateInputMin(), []);
-  const summaryItems = useMemo(() => buildSummary(formData), [formData]);
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    try {
-      const storedDraft = window.localStorage.getItem(bookingStorageKey);
-      if (!storedDraft) {
-        return;
-      }
-
-      const parsedDraft = JSON.parse(storedDraft);
-      if (parsedDraft?.formData) {
-        setFormData((current) => ({ ...current, ...parsedDraft.formData }));
-      }
-      if (typeof parsedDraft?.activeStep === "number") {
-        setActiveStep(Math.min(parsedDraft.activeStep, bookingSteps.length - 1));
-      }
-      setHasRestoredDraft(true);
-    } catch {
-      window.localStorage.removeItem(bookingStorageKey);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    window.localStorage.setItem(
-      bookingStorageKey,
-      JSON.stringify({
-        activeStep,
-        formData,
-      })
-    );
-  }, [activeStep, formData]);
-
-  const handleFieldValue = (name, value) => {
-    setFormData((current) => ({ ...current, [name]: value }));
-
-    if (stepFieldSet.has(name)) {
-      setErrors((current) => ({ ...current, [name]: "" }));
-    }
-  };
+export const BookingSection = ({
+  sectionId = "booking",
+  eyebrow = "Booking Experience",
+  title = "A premium consultation funnel built to convert interest into confirmed inquiry.",
+  copy = "This booking flow is now structured like a premium studio consultation: service selection, scheduling, client details, review, and final submission.",
+}) => {
+  const {
+    formData,
+    errors,
+    activeStep,
+    currentStep,
+    isSubmitting,
+    showSuccess,
+    successMessage,
+    submitError,
+    hasRestoredDraft,
+    minBookingDate,
+    summaryItems,
+    bookingSteps,
+    updateField,
+    goToStep,
+    nextStep,
+    previousStep,
+    submitBooking,
+    closeSuccessModal,
+  } = useBookingFlow();
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    handleFieldValue(name, value);
-  };
-
-  const handleNextStep = () => {
-    const nextErrors = getStepErrors(currentStep, formData);
-    if (Object.keys(nextErrors).length > 0) {
-      setErrors((current) => ({ ...current, ...nextErrors }));
-      return;
-    }
-
-    setActiveStep((current) => Math.min(current + 1, bookingSteps.length - 1));
-  };
-
-  const handlePreviousStep = () => {
-    setSubmitError("");
-    setActiveStep((current) => Math.max(current - 1, 0));
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    setSubmitError("");
-
-    const nextErrors = validateBookingForm(formData);
-    if (Object.keys(nextErrors).length > 0) {
-      setErrors(nextErrors);
-      const firstInvalidStepIndex = bookingSteps.findIndex((step) =>
-        step.fields.some((field) => nextErrors[field])
-      );
-      if (firstInvalidStepIndex >= 0) {
-        setActiveStep(firstInvalidStepIndex);
-      }
-      return;
-    }
-
-    try {
-      setIsSubmitting(true);
-      const payload = await postBooking(formData);
-      setFormData(initialValues);
-      setErrors({});
-      setActiveStep(0);
-      setSuccessMessage(
-        payload.message || "Your booking request has been submitted to Warrior Lens Studio."
-      );
-      setShowSuccess(true);
-      if (typeof window !== "undefined") {
-        window.localStorage.removeItem(bookingStorageKey);
-      }
-    } catch (error) {
-      setSubmitError(error.message || "Unable to submit your booking right now.");
-    } finally {
-      setIsSubmitting(false);
-    }
+    updateField(name, value);
   };
 
   return (
-    <section id="booking" className="section-block scroll-mt-28">
+    <section id={sectionId} className="section-block scroll-mt-28">
       <div className="section-shell">
         <div className="max-w-3xl">
-          <SectionHeading
-            eyebrow="Booking Experience"
-            title="A premium consultation funnel built to convert interest into confirmed inquiry."
-            copy="This booking flow is now structured like a premium studio consultation: service selection, scheduling, client details, review, and final submission."
-          />
+          <SectionHeading eyebrow={eyebrow} title={title} copy={copy} />
         </div>
 
         <div className="mt-10 grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
@@ -265,7 +78,7 @@ export const BookingSection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.12 }}
             transition={{ duration: 0.7, ease: "easeOut" }}
-            onSubmit={handleSubmit}
+            onSubmit={submitBooking}
           >
             <div className="border-b border-white/10 px-6 py-6 sm:px-8">
               <div className="flex flex-col gap-5">
@@ -299,7 +112,7 @@ export const BookingSection = () => {
                   </div>
                 </div>
 
-                <div className="grid gap-2 sm:grid-cols-5">
+                <div className="grid grid-cols-2 gap-2 md:grid-cols-5">
                   {bookingSteps.map((step, index) => {
                     const isActive = index === activeStep;
                     const isComplete = index < activeStep;
@@ -316,9 +129,7 @@ export const BookingSection = () => {
                               : "border-white/10 bg-transparent text-white/40"
                         }`}
                         onClick={() => {
-                          if (index <= activeStep) {
-                            setActiveStep(index);
-                          }
+                          goToStep(index);
                         }}
                       >
                         <span className="block text-[0.68rem] uppercase tracking-[0.28em] text-white/35">
@@ -358,7 +169,7 @@ export const BookingSection = () => {
                                   ? "border-accent/70 bg-accent/10 shadow-[0_0_0_1px_rgba(213,179,89,0.18)]"
                                   : "border-white/10 bg-white/[0.03] hover:border-white/20 hover:bg-white/[0.05]"
                               }`}
-                              onClick={() => handleFieldValue("service", service.title)}
+                              onClick={() => updateField("service", service.title)}
                               aria-pressed={isSelected}
                             >
                               <div className="inline-flex rounded-2xl border border-accent/20 bg-accent/10 p-3 text-accent-soft">
@@ -375,7 +186,7 @@ export const BookingSection = () => {
                         })}
                       </div>
 
-                      {errors.service ? <p className="text-sm text-red-300">{errors.service}</p> : null}
+                      {errors.service ? <p className="field-error-text">{errors.service}</p> : null}
 
                       <div>
                         <p className="field-label">How long should the session run?</p>
@@ -392,7 +203,7 @@ export const BookingSection = () => {
                                     ? "border-accent/70 bg-accent/10"
                                     : "border-white/10 bg-white/[0.03] hover:border-white/20 hover:bg-white/[0.05]"
                                 }`}
-                                onClick={() => handleFieldValue("duration", option.value)}
+                                onClick={() => updateField("duration", option.value)}
                               >
                                 <p className="text-xs uppercase tracking-[0.3em] text-accent-soft/85">
                                   {option.label}
@@ -408,7 +219,7 @@ export const BookingSection = () => {
                           })}
                         </div>
                         {errors.duration ? (
-                          <p className="mt-4 text-sm text-red-300">{errors.duration}</p>
+                          <p className="field-error-text mt-4">{errors.duration}</p>
                         ) : null}
                       </div>
                     </div>
@@ -426,13 +237,13 @@ export const BookingSection = () => {
                           type="text"
                           value={formData.location}
                           onChange={handleChange}
-                          className="field-input"
+                          className={getFieldClassName(Boolean(errors.location))}
                           placeholder="Lagos, campus, studio, or preferred venue"
                           autoComplete="address-level2"
                           required
                         />
                         {errors.location ? (
-                          <p className="mt-3 text-sm text-red-300">{errors.location}</p>
+                          <p className="field-error-text">{errors.location}</p>
                         ) : null}
 
                         <div className="mt-8">
@@ -447,7 +258,7 @@ export const BookingSection = () => {
                                     ? "border-accent/70 bg-accent/15 text-accent-soft"
                                     : "border-white/10 bg-white/5 text-white/75 hover:border-white/25 hover:bg-white/10"
                                 }`}
-                                onClick={() => handleFieldValue("location", suggestion)}
+                                onClick={() => updateField("location", suggestion)}
                               >
                                 {suggestion}
                               </button>
@@ -467,10 +278,10 @@ export const BookingSection = () => {
                           min={minBookingDate}
                           value={formData.date}
                           onChange={handleChange}
-                          className="field-input"
+                          className={getFieldClassName(Boolean(errors.date))}
                           required
                         />
-                        {errors.date ? <p className="mt-3 text-sm text-red-300">{errors.date}</p> : null}
+                        {errors.date ? <p className="field-error-text">{errors.date}</p> : null}
 
                         <div className="mt-8 rounded-[1.5rem] border border-white/10 bg-white/[0.03] p-5">
                           <p className="text-xs uppercase tracking-[0.3em] text-white/40">
@@ -497,12 +308,12 @@ export const BookingSection = () => {
                           type="text"
                           value={formData.name}
                           onChange={handleChange}
-                          className="field-input"
+                          className={getFieldClassName(Boolean(errors.name))}
                           placeholder="Your full name"
                           autoComplete="name"
                           required
                         />
-                        {errors.name ? <p className="mt-3 text-sm text-red-300">{errors.name}</p> : null}
+                        {errors.name ? <p className="field-error-text">{errors.name}</p> : null}
                       </div>
 
                       <div>
@@ -515,12 +326,12 @@ export const BookingSection = () => {
                           type="email"
                           value={formData.email}
                           onChange={handleChange}
-                          className="field-input"
+                          className={getFieldClassName(Boolean(errors.email))}
                           placeholder="you@example.com"
                           autoComplete="email"
                           required
                         />
-                        {errors.email ? <p className="mt-3 text-sm text-red-300">{errors.email}</p> : null}
+                        {errors.email ? <p className="field-error-text">{errors.email}</p> : null}
                       </div>
 
                       <div>
@@ -533,12 +344,12 @@ export const BookingSection = () => {
                           type="tel"
                           value={formData.phone}
                           onChange={handleChange}
-                          className="field-input"
+                          className={getFieldClassName(Boolean(errors.phone))}
                           placeholder="+234..."
                           autoComplete="tel"
                           required
                         />
-                        {errors.phone ? <p className="mt-3 text-sm text-red-300">{errors.phone}</p> : null}
+                        {errors.phone ? <p className="field-error-text">{errors.phone}</p> : null}
                       </div>
 
                       <div className="md:col-span-2">
@@ -551,11 +362,11 @@ export const BookingSection = () => {
                           rows="7"
                           value={formData.message}
                           onChange={handleChange}
-                          className="field-input resize-none"
+                          className={getFieldClassName(Boolean(errors.message), "resize-none")}
                           placeholder="Tell Warrior Lens about the mood, purpose, expectations, or any special notes for the session."
                           required
                         />
-                        {errors.message ? <p className="mt-3 text-sm text-red-300">{errors.message}</p> : null}
+                        {errors.message ? <p className="field-error-text">{errors.message}</p> : null}
                       </div>
                     </div>
                   ) : null}
@@ -564,7 +375,7 @@ export const BookingSection = () => {
                     <div className="space-y-6">
                       <div className="grid gap-4 md:grid-cols-2">
                         {summaryItems.map((item) => {
-                          const Icon = item.icon;
+                          const Icon = iconMap[item.iconKey] || CameraIcon;
 
                           return (
                             <div
@@ -614,7 +425,7 @@ export const BookingSection = () => {
                               Response Path
                             </p>
                             <p className="mt-3 text-sm leading-7 text-white/70">
-                              Submitted requests are saved and delivered to the Warrior Lens inbox.
+                              Submitted requests are saved and reviewed personally before the studio replies.
                             </p>
                           </div>
                           <div className="rounded-[1.35rem] border border-white/10 bg-black/20 p-4">
@@ -665,21 +476,21 @@ export const BookingSection = () => {
                 </motion.div>
               </AnimatePresence>
 
-              {submitError ? <p className="mt-6 text-sm text-red-300">{submitError}</p> : null}
+              {submitError ? <p className="field-error-text mt-6">{submitError}</p> : null}
 
               <div className="mt-8 flex flex-col gap-3 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
-                <button
-                  type="button"
-                  className="secondary-button"
-                  onClick={handlePreviousStep}
-                  disabled={activeStep === 0 || isSubmitting}
-                >
+                  <button
+                    type="button"
+                    className="secondary-button"
+                    onClick={previousStep}
+                    disabled={activeStep === 0 || isSubmitting}
+                  >
                   <ChevronLeftIcon />
                   Previous
                 </button>
 
                 {activeStep < bookingSteps.length - 1 ? (
-                  <button type="button" className="primary-button" onClick={handleNextStep}>
+                  <button type="button" className="primary-button" onClick={nextStep}>
                     {activeStep === bookingSteps.length - 2 ? "Proceed to Submit" : "Continue"}
                     <ArrowRightIcon />
                   </button>
@@ -708,7 +519,7 @@ export const BookingSection = () => {
 
             <div className="mt-8 space-y-4">
               {summaryItems.map((item) => {
-                const Icon = item.icon;
+                const Icon = iconMap[item.iconKey] || CameraIcon;
                 const isPending = item.value === "Pending";
 
                 return (
@@ -769,9 +580,9 @@ export const BookingSection = () => {
       <AnimatePresence>
         {showSuccess ? (
           <FeedbackModal
-            title="Booking request sent."
+            title="Request received."
             message={successMessage}
-            onClose={() => setShowSuccess(false)}
+            onClose={closeSuccessModal}
           />
         ) : null}
       </AnimatePresence>

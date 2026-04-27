@@ -4,9 +4,16 @@ import { siteConfig } from "../config/site";
 import { portfolioCategories } from "../data/portfolio";
 import { SectionHeading } from "./SectionHeading";
 import { LazyImage } from "./LazyImage";
-import { scrollToSection } from "../utils/scroll";
 
-export const PortfolioSection = ({ items, onOpenLightbox }) => {
+export const PortfolioSection = ({
+  items,
+  onOpenLightbox,
+  eyebrow = "Portfolio",
+  title = "Selected frames arranged for quick browsing, deeper viewing, and future expansion.",
+  copy = "A filterable portfolio now populated with real Warrior Lens work across portraits, events, creative studies, and documentary frames. The full live collection can still be opened on Pixies anytime.",
+  showArchiveBanner = true,
+  onCheckAvailability,
+}) => {
   const [activeFilter, setActiveFilter] = useState("All");
   const deferredFilter = useDeferredValue(activeFilter);
 
@@ -21,36 +28,29 @@ export const PortfolioSection = ({ items, onOpenLightbox }) => {
   return (
     <section id="portfolio" className="section-block">
       <div className="section-shell">
-        <SectionHeading
-          eyebrow="Portfolio"
-          title="Selected frames arranged for quick browsing, deeper viewing, and future expansion."
-          copy="A filterable portfolio now populated with real Warrior Lens work across portraits, events, creative studies, and documentary frames. The full live collection can still be opened on Pixies anytime."
-        />
+        <SectionHeading eyebrow={eyebrow} title={title} copy={copy} />
 
-        <div className="mt-8 flex flex-wrap items-center gap-4 rounded-[1.75rem] border border-white/10 bg-white/[0.03] p-5">
-          <p className="max-w-3xl text-sm leading-7 text-white/68">
-            This gallery now features selected Warrior Lens originals on-site, while your broader
-            public archive remains available through Pixies for clients who want to browse more.
-          </p>
-          <a
-            href={siteConfig.portfolioUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="primary-button"
-          >
-            Open Full Portfolio
-          </a>
-          <a
-            href="#booking"
-            className="secondary-button"
-            onClick={(event) => {
-              event.preventDefault();
-              scrollToSection("booking", "#booking-service");
-            }}
-          >
-            Check Availability
-          </a>
-        </div>
+        {showArchiveBanner ? (
+          <div className="mt-8 flex flex-wrap items-center gap-4 rounded-[1.75rem] border border-white/10 bg-white/[0.03] p-5">
+            <p className="max-w-3xl text-sm leading-7 text-white/68">
+              This gallery features selected Warrior Lens originals on-site, while the broader
+              public archive remains available through Pixies for clients who want to browse more.
+            </p>
+            <a
+              href={siteConfig.portfolioUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="primary-button"
+            >
+              Open Full Portfolio
+            </a>
+            {onCheckAvailability ? (
+              <button type="button" className="secondary-button" onClick={onCheckAvailability}>
+                Check Availability
+              </button>
+            ) : null}
+          </div>
+        ) : null}
 
         <div className="mt-10 flex flex-wrap gap-3">
           {portfolioCategories.map((category) => (
@@ -106,16 +106,18 @@ export const PortfolioSection = ({ items, onOpenLightbox }) => {
                       </span>
                     </div>
                   </div>
-                  <div className="space-y-3 p-5">
-                    <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="space-y-3 p-5 sm:p-6">
+                    <div className="flex flex-wrap items-center gap-3">
                       <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[0.68rem] uppercase tracking-[0.28em] text-accent-soft/90">
                         {item.category}
                       </span>
-                      <span className="text-xs uppercase tracking-[0.25em] text-white/40">
-                        {item.date}
-                      </span>
+                      {item.collection ? (
+                        <span className="text-[0.68rem] uppercase tracking-[0.24em] text-white/36">
+                          {item.collection}
+                        </span>
+                      ) : null}
                     </div>
-                    <h3 className="font-display text-3xl text-white">{item.title}</h3>
+                    <h3 className="font-display text-[1.85rem] text-white sm:text-3xl">{item.title}</h3>
                     <p className="text-sm leading-7 text-white/65">{item.description}</p>
                   </div>
                 </button>

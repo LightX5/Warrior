@@ -136,3 +136,23 @@ export const MinusIcon = ({ className = "h-5 w-5" }) => (
     <path d="M5 12h14" />
   </svg>
 );
+
+export const BotIcon = ({ className = "h-5 w-5" }) => (
+  <svg className={className} {...iconProps}>
+    <rect x="5" y="7" width="14" height="10" rx="3" />
+    <path d="M12 3v4" />
+    <path d="M9 12h.01" />
+    <path d="M15 12h.01" />
+    <path d="M9 17v2" />
+    <path d="M15 17v2" />
+    <path d="M8 7 6.2 5.2" />
+    <path d="M16 7l1.8-1.8" />
+  </svg>
+);
+
+export const SendIcon = ({ className = "h-5 w-5" }) => (
+  <svg className={className} {...iconProps}>
+    <path d="M21 3 3 10l7 2 2 7 9-16Z" />
+    <path d="M10 12 21 3" />
+  </svg>
+);

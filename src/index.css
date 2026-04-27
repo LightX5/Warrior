@@ -46,11 +46,11 @@
 
 @layer components {
   .section-shell {
-    @apply mx-auto w-[min(100%-1.5rem,1280px)];
+    @apply mx-auto w-[min(100%-1.1rem,1280px)] sm:w-[min(100%-1.5rem,1280px)];
   }
 
   .section-block {
-    @apply relative py-24 sm:py-28 lg:py-32;
+    @apply relative py-20 sm:py-24 lg:py-28;
   }
 
   .glass-panel {
@@ -62,7 +62,7 @@
   }
 
   .section-title {
-    @apply font-display text-4xl leading-none text-white sm:text-5xl lg:text-6xl;
+    @apply font-display text-4xl leading-[0.96] text-white sm:text-5xl lg:text-6xl;
   }
 
   .section-copy {
@@ -83,6 +83,14 @@
 
   .field-label {
     @apply mb-2 block text-xs font-semibold uppercase tracking-[0.28em] text-white/55;
+  }
+
+  .field-input-error {
+    @apply border-red-400/55 bg-red-500/[0.06] focus:border-red-300;
+  }
+
+  .field-error-text {
+    @apply mt-3 text-sm text-red-200;
   }
 
   .masonry-grid {

@@ -8,9 +8,8 @@ import {
   MinusIcon,
   PlusIcon,
 } from "./icons";
-import { scrollToSection } from "../utils/scroll";
 
-export const LightboxModal = ({ item, onClose, onNext, onPrevious }) => {
+export const LightboxModal = ({ item, onClose, onNext, onPrevious, onBookSimilar }) => {
   const [zoomLevel, setZoomLevel] = useState(1);
   const touchStartX = useRef(null);
 
@@ -123,8 +122,8 @@ export const LightboxModal = ({ item, onClose, onNext, onPrevious }) => {
                 <p className="mt-2 text-base text-white">{item.category}</p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                <p className="text-xs uppercase tracking-[0.3em] text-white/45">Captured</p>
-                <p className="mt-2 text-base text-white">{item.date}</p>
+                <p className="text-xs uppercase tracking-[0.3em] text-white/45">Collection</p>
+                <p className="mt-2 text-base text-white">{item.collection || item.category}</p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
                 <p className="text-xs uppercase tracking-[0.3em] text-white/45">Story</p>
@@ -187,7 +186,7 @@ export const LightboxModal = ({ item, onClose, onNext, onPrevious }) => {
               className="primary-button w-full px-4 py-3"
               onClick={() => {
                 onClose();
-                scrollToSection("booking", "#booking-service");
+                onBookSimilar?.();
               }}
             >
               Book a Similar Session

@@ -1,13 +1,20 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { navigationSections } from "../config/site";
+import { useStudioNavigation } from "../hooks/useStudioNavigation";
+import { useStudioRoute } from "../hooks/useStudioRoute";
+import { studioRoutes } from "../pages/routes";
 import { LazyImage } from "./LazyImage";
 import { CloseIcon, MenuIcon } from "./icons";
-import { scrollToSection } from "../utils/scroll";
 
-export const Navbar = ({ activeSection }) => {
+export const Navbar = () => {
+  const { pathname } = useStudioRoute();
+  const { navigate, startBookingFlow } = useStudioNavigation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -20,9 +27,9 @@ export const Navbar = ({ activeSection }) => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleSectionClick = (event, sectionId) => {
+  const handleNavigation = (event, path) => {
     event.preventDefault();
-    scrollToSection(sectionId, sectionId === "booking" ? "#booking-service" : undefined);
+    navigate(path);
     setMobileOpen(false);
   };
 
@@ -37,9 +44,9 @@ export const Navbar = ({ activeSection }) => {
       >
         <div className="section-shell flex h-20 items-center justify-between gap-4">
           <a
-            href="#home"
+            href="/"
             className="inline-flex items-center gap-3"
-            onClick={(event) => handleSectionClick(event, "home")}
+            onClick={(event) => handleNavigation(event, "/")}
           >
             <LazyImage
               src="/brand/warrior-lens-logo.png"
@@ -58,21 +65,21 @@ export const Navbar = ({ activeSection }) => {
           </a>
 
           <nav className="hidden items-center gap-2 lg:flex">
-            {navigationSections.map((section) => {
-              const isActive = activeSection === section.id;
+            {studioRoutes.map((route) => {
+              const isActive = pathname === route.path;
 
               return (
                 <a
-                  key={section.id}
-                  href={`#${section.id}`}
-                  onClick={(event) => handleSectionClick(event, section.id)}
+                  key={route.path}
+                  href={route.path}
+                  onClick={(event) => handleNavigation(event, route.path)}
                   className={`rounded-full px-4 py-2 text-sm font-medium transition ${
                     isActive
                       ? "bg-white/10 text-white"
                       : "text-white/60 hover:bg-white/5 hover:text-white"
                   }`}
                 >
-                  {section.label}
+                  {route.label}
                 </a>
               );
             })}
@@ -80,9 +87,12 @@ export const Navbar = ({ activeSection }) => {
 
           <div className="hidden lg:block">
             <a
-              href="#booking"
+              href="/booking"
               className="primary-button px-5 py-2.5"
-              onClick={(event) => handleSectionClick(event, "booking")}
+              onClick={(event) => {
+                event.preventDefault();
+                startBookingFlow();
+              }}
             >
               Book a Session
             </a>
@@ -108,21 +118,21 @@ export const Navbar = ({ activeSection }) => {
             exit={{ opacity: 0, y: -16 }}
           >
             <nav className="grid gap-2">
-              {navigationSections.map((section) => {
-                const isActive = activeSection === section.id;
+              {studioRoutes.map((route) => {
+                const isActive = pathname === route.path;
 
                 return (
                   <a
-                    key={section.id}
-                    href={`#${section.id}`}
-                    onClick={(event) => handleSectionClick(event, section.id)}
+                    key={route.path}
+                    href={route.path}
+                    onClick={(event) => handleNavigation(event, route.path)}
                     className={`rounded-2xl px-4 py-3 text-sm font-medium transition ${
                       isActive
                         ? "bg-white/10 text-white"
                         : "text-white/65 hover:bg-white/5 hover:text-white"
                     }`}
                   >
-                    {section.label}
+                    {route.label}
                   </a>
                 );
               })}

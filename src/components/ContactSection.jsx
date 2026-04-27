@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { siteConfig } from "../config/site";
-import { postContactMessage } from "../lib/api";
+import { submitContactMessage } from "../services/contactService";
 import { validateContactForm } from "../utils/validation";
 import { SectionHeading } from "./SectionHeading";
 import { FeedbackModal } from "./FeedbackModal";
@@ -19,7 +19,14 @@ const initialValues = {
   message: "",
 };
 
-export const ContactSection = () => {
+const getFieldClassName = (hasError, extraClasses = "") =>
+  `field-input ${hasError ? "field-input-error" : ""} ${extraClasses}`.trim();
+
+export const ContactSection = ({
+  eyebrow = "Contact",
+  title = "Give clients multiple ways to reach the studio while keeping the visual language clean.",
+  copy = "Instagram, Facebook, WhatsApp, direct email, and a contact message flow are all positioned here so the studio can respond on the channel that fits best.",
+}) => {
   const [formData, setFormData] = useState(initialValues);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -48,7 +55,7 @@ export const ContactSection = () => {
 
     try {
       setIsSubmitting(true);
-      const payload = await postContactMessage(formData);
+      const payload = await submitContactMessage(formData);
       setFormData(initialValues);
       setErrors({});
       setSuccessMessage(payload.message || "Your message has been delivered to Warrior Lens Studio.");
@@ -64,9 +71,9 @@ export const ContactSection = () => {
     <section id="contact" className="section-block">
       <div className="section-shell">
         <SectionHeading
-          eyebrow="Contact"
-          title="Give clients multiple ways to reach the studio while keeping the visual language clean."
-          copy="Instagram, Facebook, WhatsApp, direct email, and a contact message flow are all positioned here so the studio can respond on the channel that fits best."
+          eyebrow={eyebrow}
+          title={title}
+          copy={copy}
         />
 
         <div className="mt-10 grid gap-6 xl:grid-cols-[minmax(0,0.8fr)_minmax(22rem,0.7fr)]">
@@ -160,10 +167,10 @@ export const ContactSection = () => {
                   type="text"
                   value={formData.name}
                   onChange={handleChange}
-                  className="field-input"
+                  className={getFieldClassName(Boolean(errors.name))}
                   placeholder="Your name"
                 />
-                {errors.name ? <p className="mt-2 text-sm text-red-300">{errors.name}</p> : null}
+                {errors.name ? <p className="field-error-text mt-2">{errors.name}</p> : null}
               </div>
 
               <div>
@@ -176,10 +183,10 @@ export const ContactSection = () => {
                   type="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="field-input"
+                  className={getFieldClassName(Boolean(errors.email))}
                   placeholder="you@example.com"
                 />
-                {errors.email ? <p className="mt-2 text-sm text-red-300">{errors.email}</p> : null}
+                {errors.email ? <p className="field-error-text mt-2">{errors.email}</p> : null}
               </div>
 
               <div>
@@ -192,14 +199,14 @@ export const ContactSection = () => {
                   rows="6"
                   value={formData.message}
                   onChange={handleChange}
-                  className="field-input resize-none"
+                  className={getFieldClassName(Boolean(errors.message), "resize-none")}
                   placeholder="Tell Warrior Lens Studio what you need."
                 />
-                {errors.message ? <p className="mt-2 text-sm text-red-300">{errors.message}</p> : null}
+                {errors.message ? <p className="field-error-text mt-2">{errors.message}</p> : null}
               </div>
             </div>
 
-            {submitError ? <p className="mt-5 text-sm text-red-300">{submitError}</p> : null}
+            {submitError ? <p className="field-error-text mt-5">{submitError}</p> : null}
 
             <button type="submit" className="primary-button mt-8 w-full" disabled={isSubmitting}>
               {isSubmitting ? "Sending message..." : "Send Message"}
@@ -211,7 +218,7 @@ export const ContactSection = () => {
       <AnimatePresence>
         {showSuccess ? (
           <FeedbackModal
-            title="Message sent."
+            title="Message received."
             message={successMessage}
             onClose={() => setShowSuccess(false)}
           />

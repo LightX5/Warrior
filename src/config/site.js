@@ -44,12 +44,3 @@ export const heroSlides = heroSlideIds
     };
   })
   .filter(Boolean);
-
-export const navigationSections = [
-  { id: "home", label: "Home" },
-  { id: "about", label: "About" },
-  { id: "portfolio", label: "Portfolio" },
-  { id: "services", label: "Services" },
-  { id: "booking", label: "Booking" },
-  { id: "contact", label: "Contact" },
-];

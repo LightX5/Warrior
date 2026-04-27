@@ -1,7 +1,7 @@
-import { useMemo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 import { imageManifest } from "../data/imageManifest";
 
-export const LazyImage = ({
+const LazyImageComponent = ({
   src,
   alt,
   className = "",
@@ -82,3 +82,5 @@ export const LazyImage = ({
     </div>
   );
 };
+
+export const LazyImage = memo(LazyImageComponent);

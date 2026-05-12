@@ -8,16 +8,16 @@ import { useStudioNavigation } from "../hooks/useStudioNavigation";
 
 const processSteps = [
   {
-    title: "Inquiry Review",
-    copy: "Every request is reviewed personally so the studio can respond with the right scope, tone, and availability.",
+    title: "Tell us what you need",
+    copy: "Share the kind of coverage you want, the date, and any important details.",
   },
   {
-    title: "Creative Planning",
-    copy: "Sessions are shaped around mood, logistics, location, and the kind of emotional storytelling the client wants.",
+    title: "We review the plan",
+    copy: "We look at the brief, location, timing, and what the session needs.",
   },
   {
-    title: "Delivery Experience",
-    copy: "The final work is refined with the same care the booking flow promises up front.",
+    title: "You get a clear reply",
+    copy: "If the date works, we reply with the next step and what to expect.",
   },
 ];
 
@@ -30,8 +30,8 @@ export const ServicesPage = () => {
     <>
       <PageHero
         eyebrow="Services"
-        title="Premium photography offerings structured to feel bespoke from the first click."
-        copy="Warrior Lens presents services as intentional studio offers, not a cluttered list. Each one is designed to lead naturally into a personal consultation and a tailored quote."
+        title="Photography for events, portraits, and stories that matter."
+        copy="Choose the kind of work you need, then send a booking request with the details."
         actions={[
           { label: "Book a Session", onClick: startBookingFlow },
           {
@@ -43,16 +43,16 @@ export const ServicesPage = () => {
         visual={{
           image: servicesHeroItem?.image || siteConfig.founderImage,
           alt: servicesHeroItem?.alt || "Warrior Lens featured service visual",
-          eyebrow: "Studio Offer",
-          title: "Portraits, events, documentary, and concept-led storytelling.",
-          copy: "The structure stays simple, but the experience around it needs to feel high-touch and considered.",
+          eyebrow: "Services",
+          title: "Portraits, events, documentary, and creative shoots.",
+          copy: "Simple options, clear next steps, and room to talk through the details properly.",
         }}
       />
       <main>
         <ServicesSection
           eyebrow="Studio Services"
-          title="Coverage built for identity, occasion, culture, and atmosphere."
-          copy="Each offer is clear enough to build trust fast, but flexible enough to support custom quoting, future payments, and an eventual admin system."
+          title="Choose a service and we will take it from there."
+          copy="If you already know what you need, the booking page is the fastest next step."
           onBookSession={startBookingFlow}
         />
 
@@ -80,9 +80,9 @@ export const ServicesPage = () => {
         </section>
 
         <ConsultationBanner
-          eyebrow="Booking Prompt"
-          title="The best next step is a date check, a brief, and a personal review."
-          copy="Instead of turning services into a dead-end page, Warrior Lens pushes the visitor toward a guided inquiry that feels premium from the start."
+          eyebrow="Booking"
+          title="Ready to book? Send the details and we will reply."
+          copy="The booking page lets you share the service, date, location, and brief in one place."
           primaryAction={{ label: "Start Booking", onClick: startBookingFlow }}
           secondaryAction={{ label: "Contact Studio", onClick: () => navigate("/contact") }}
         />

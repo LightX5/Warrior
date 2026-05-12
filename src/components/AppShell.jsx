@@ -7,12 +7,11 @@ import { Navbar } from "./Navbar";
 
 export const AppShell = ({ pathname, assistantSlot = null, children }) => (
   <div className="relative overflow-x-clip">
-    <div className="pointer-events-none absolute inset-0 -z-10 opacity-60">
-      <div className="absolute inset-x-0 top-0 h-[30rem] bg-[radial-gradient(circle_at_top,rgba(213,179,89,0.18),transparent_42%)]" />
-      <div className="absolute left-0 top-24 h-[26rem] w-[26rem] rounded-full bg-amber-300/10 blur-3xl" />
-      <div className="absolute right-0 top-40 h-[24rem] w-[24rem] rounded-full bg-white/5 blur-3xl" />
+    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+      <div className="absolute left-[-12rem] top-[8rem] h-[24rem] w-[24rem] rounded-full bg-[#1b5e37]/18 blur-[110px]" />
+      <div className="absolute right-[-10rem] top-[5rem] h-[22rem] w-[22rem] rounded-full bg-[#d5b359]/16 blur-[110px]" />
+      <div className="absolute bottom-[-10rem] left-1/2 h-[20rem] w-[20rem] -translate-x-1/2 rounded-full bg-[#9f7f2f]/10 blur-[120px]" />
     </div>
-
     <Navbar />
     <AnimatePresence mode="wait">
       <motion.div key={pathname} {...MOTION_PRESETS.page}>

@@ -14,8 +14,8 @@ export const ContactPage = () => {
     <>
       <PageHero
         eyebrow="Contact"
-        title="Reach the studio through the channel that feels most natural, then move into booking when you're ready."
-        copy="WhatsApp, Instagram, email, and the direct message form all stay available here. The layout is intentionally clean so trust and access come first."
+        title="Reach the studio."
+        copy="Send a message here, or go straight to booking if you already know what you need."
         actions={[
           { label: "Book a Session", onClick: startBookingFlow },
           {
@@ -27,20 +27,20 @@ export const ContactPage = () => {
         visual={{
           image: contactHeroItem?.image || siteConfig.founderImage,
           alt: contactHeroItem?.alt || "Warrior Lens contact visual",
-          eyebrow: "Open Channels",
-          title: "Quick access, premium tone, clear next steps.",
-          copy: "Contact should never feel like a fallback page. It still needs to guide a visitor toward a real booking conversation.",
+          eyebrow: "Contact",
+          title: "WhatsApp, email, phone, and Instagram.",
+          copy: "Use whichever one feels easiest.",
         }}
       />
       <main>
         <ContactSection
-          title="Reach the studio clearly, then move into booking with confidence."
-          copy="Every contact path here is meant to feel direct and calm. If you already know what you need, the booking page remains the strongest conversion path."
+          title="Get in touch."
+          copy="If you already know the date and service, the booking page is still the best place to start."
         />
         <ConsultationBanner
-          eyebrow="Client Journey"
-          title="For the strongest conversion path, go from message to consultation to confirmed session."
-          copy="If you already know the kind of coverage you need, the booking page gives Warrior Lens the context required to respond well and respond faster."
+          eyebrow="Booking"
+          title="Need a faster start?"
+          copy="Go to booking and send the service, date, location, and brief in one step."
           primaryAction={{ label: "Go to Booking", onClick: startBookingFlow }}
           secondaryAction={{ label: "See Services", onClick: () => navigate("/services") }}
         />

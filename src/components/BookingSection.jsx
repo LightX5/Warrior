@@ -34,9 +34,10 @@ const getFieldClassName = (hasError, extraClasses = "") =>
 
 export const BookingSection = ({
   sectionId = "booking",
-  eyebrow = "Booking Experience",
-  title = "A premium consultation funnel built to convert interest into confirmed inquiry.",
-  copy = "This booking flow is now structured like a premium studio consultation: service selection, scheduling, client details, review, and final submission.",
+  eyebrow = "Consultation",
+  title = "A clear, direct booking flow.",
+  copy = "Choose the service, add the date and location, then send the details.",
+  compact = false,
 }) => {
   const {
     formData,
@@ -65,19 +66,18 @@ export const BookingSection = ({
   };
 
   return (
-    <section id={sectionId} className="section-block scroll-mt-28">
+    <section
+      id={sectionId}
+      className={`${compact ? "pb-16 pt-6 sm:pb-20 sm:pt-8" : "section-block"} scroll-mt-28`}
+    >
       <div className="section-shell">
         <div className="max-w-3xl">
           <SectionHeading eyebrow={eyebrow} title={title} copy={copy} />
         </div>
 
         <div className="mt-10 grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
-          <motion.form
+          <form
             className="glass-panel overflow-hidden rounded-[2rem]"
-            initial={{ opacity: 0, y: 28 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.12 }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
             onSubmit={submitBooking}
           >
             <div className="border-b border-white/10 px-6 py-6 sm:px-8">
@@ -147,10 +147,10 @@ export const BookingSection = ({
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentStep.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -18 }}
-                  transition={{ duration: 0.28, ease: "easeOut" }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.18, ease: "easeOut" }}
                   className="min-h-[25rem]"
                 >
                   {currentStep.id === "service" ? (
@@ -284,12 +284,9 @@ export const BookingSection = ({
                         {errors.date ? <p className="field-error-text">{errors.date}</p> : null}
 
                         <div className="mt-8 rounded-[1.5rem] border border-white/10 bg-white/[0.03] p-5">
-                          <p className="text-xs uppercase tracking-[0.3em] text-white/40">
-                            Schedule note
-                          </p>
+                          <p className="text-xs uppercase tracking-[0.3em] text-white/40">Date check</p>
                           <p className="mt-3 text-sm leading-7 text-white/66">
-                            Availability is checked against the preferred date, service type, and
-                            location together, so this step sets the whole consultation up.
+                            We check the date together with the service and location before we reply.
                           </p>
                         </div>
                       </div>
@@ -405,8 +402,7 @@ export const BookingSection = ({
                           Auto-saved progress
                         </p>
                         <p className="mt-3 text-sm leading-7 text-white/72">
-                          Your progress is stored locally on this device, so if you leave and come
-                          back, the form can pick up from where you stopped.
+                          Your progress is saved on this device, so you can come back without starting again.
                         </p>
                       </div>
                     </div>
@@ -416,24 +412,18 @@ export const BookingSection = ({
                     <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_18rem]">
                       <div className="rounded-[1.75rem] border border-white/10 bg-white/[0.03] p-6">
                         <p className="section-eyebrow mb-3">Before You Send</p>
-                        <h4 className="font-display text-3xl text-white">
-                          This is structured to feel like a consultation request.
-                        </h4>
+                        <h4 className="font-display text-3xl text-white">We will review your request personally.</h4>
                         <div className="mt-6 grid gap-4 sm:grid-cols-2">
                           <div className="rounded-[1.35rem] border border-white/10 bg-black/20 p-4">
-                            <p className="text-xs uppercase tracking-[0.28em] text-accent-soft/85">
-                              Response Path
-                            </p>
+                            <p className="text-xs uppercase tracking-[0.28em] text-accent-soft/85">Review</p>
                             <p className="mt-3 text-sm leading-7 text-white/70">
-                              Submitted requests are saved and reviewed personally before the studio replies.
+                              Your request is saved and reviewed before we reply.
                             </p>
                           </div>
                           <div className="rounded-[1.35rem] border border-white/10 bg-black/20 p-4">
-                            <p className="text-xs uppercase tracking-[0.28em] text-accent-soft/85">
-                              Fast Follow-up
-                            </p>
+                            <p className="text-xs uppercase tracking-[0.28em] text-accent-soft/85">Follow-up</p>
                             <p className="mt-3 text-sm leading-7 text-white/70">
-                              You can also continue the conversation directly on WhatsApp after you submit.
+                              You can also continue the conversation on WhatsApp after you submit.
                             </p>
                           </div>
                         </div>
@@ -502,19 +492,15 @@ export const BookingSection = ({
                 )}
               </div>
             </div>
-          </motion.form>
+          </form>
 
-          <motion.aside
+          <aside
             className="glass-panel rounded-[2rem] p-6 sm:p-7 xl:sticky xl:top-28"
-            initial={{ opacity: 0, y: 28 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.12 }}
-            transition={{ duration: 0.7, ease: "easeOut", delay: 0.08 }}
           >
             <p className="section-eyebrow mb-3">Consultation Summary</p>
-            <h3 className="font-display text-3xl text-white">Always in view</h3>
+            <h3 className="font-display text-3xl text-white">Your summary</h3>
             <p className="mt-4 text-sm leading-7 text-white/66">
-              The summary stays visible so the client always knows what is being booked.
+              Keep track of the service, date, and details as you move through the form.
             </p>
 
             <div className="mt-8 space-y-4">
@@ -551,18 +537,15 @@ export const BookingSection = ({
 
             <div className="mt-8 space-y-4 rounded-[1.5rem] border border-accent/20 bg-accent/10 p-5">
               <div>
-                <p className="text-xs uppercase tracking-[0.3em] text-accent-soft/85">
-                  Trust Signals
-                </p>
+                <p className="text-xs uppercase tracking-[0.3em] text-accent-soft/85">Booking</p>
                 <p className="mt-3 text-sm leading-7 text-white/68">
-                  This flow saves progress, validates each step, and delivers the request directly
-                  to the studio inbox for follow-up.
+                  This form saves your progress, checks each step, and sends the request straight to the studio inbox.
                 </p>
               </div>
 
               {hasRestoredDraft ? (
                 <div className="rounded-[1.25rem] border border-white/10 bg-black/20 p-4 text-sm text-white/70">
-                  Draft restored from this device.
+                  Saved progress restored on this device.
                 </div>
               ) : null}
 
@@ -573,7 +556,7 @@ export const BookingSection = ({
                 </div>
               </div>
             </div>
-          </motion.aside>
+          </aside>
         </div>
       </div>
 

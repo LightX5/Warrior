@@ -14,28 +14,28 @@ export const studioRoutes = [
     label: "Portfolio",
     title: "Portfolio | Warrior Lens Studio",
     description:
-      "Explore curated Warrior Lens photography across portraits, events, creative shoots, and documentary storytelling.",
+      "A selection of portrait, event, documentary, and creative work by Warrior Lens Studio.",
   },
   {
     path: "/services",
     label: "Services",
     title: "Services | Warrior Lens Studio",
     description:
-      "Discover Warrior Lens photography services for portraits, events, creative concepts, documentary work, and refined post-production.",
+      "Photography for events, portraits, creative shoots, documentary work, and editing.",
   },
   {
     path: "/booking",
     label: "Booking",
     title: "Book a Session | Warrior Lens Studio",
     description:
-      "Start a premium Warrior Lens booking consultation with service selection, date planning, and a guided review flow.",
+      "Send your booking request with the details needed for a clear reply on date, location, and service.",
   },
   {
     path: "/contact",
     label: "Contact",
     title: "Contact | Warrior Lens Studio",
     description:
-      "Reach Warrior Lens Studio through WhatsApp, Instagram, email, or the direct contact form.",
+      "Get in touch with Warrior Lens Studio by WhatsApp, email, phone, or the contact form.",
   },
 ];
 

@@ -8,8 +8,8 @@ export const PortfolioCollectionsSection = ({ collections, onOpenLightbox }) => 
     <div className="section-shell">
       <SectionHeading
         eyebrow="Collections"
-        title="Small story-led groupings make the portfolio feel more like an exhibition."
-        copy="These collections are meant to slow the visitor down a little, giving the work context before the larger archive opens up."
+        title="A few small groupings from the archive."
+        copy="These sets are here to give the work a little context."
       />
 
       <div className="mt-10 grid gap-5 lg:grid-cols-3">
@@ -29,7 +29,7 @@ export const PortfolioCollectionsSection = ({ collections, onOpenLightbox }) => 
             <motion.button
               key={collection.id}
               type="button"
-              className="group glass-panel overflow-hidden rounded-[1.85rem] text-left"
+              className="group overflow-hidden rounded-[1.5rem] border border-white/10 bg-black text-left"
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.18 }}
@@ -49,27 +49,12 @@ export const PortfolioCollectionsSection = ({ collections, onOpenLightbox }) => 
               </div>
 
               <div className="space-y-4 p-6">
-                <p className="text-xs uppercase tracking-[0.32em] text-accent-soft/88">
-                  Collection
-                </p>
+                <p className="text-xs uppercase tracking-[0.32em] text-white/45">Collection</p>
                 <h3 className="font-display text-3xl text-white">{collection.title}</h3>
                 <p className="text-sm leading-7 text-white/66">{collection.context}</p>
-
-                <div className="flex flex-wrap gap-2 pt-2">
-                  {visibleItems.map((item) => (
-                    <span
-                      key={item.id}
-                      className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-[0.68rem] uppercase tracking-[0.24em] text-white/58"
-                    >
-                      {item.title}
-                    </span>
-                  ))}
-                  {remainingCount > 0 ? (
-                    <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-[0.68rem] uppercase tracking-[0.24em] text-white/42">
-                      +{remainingCount} more
-                    </span>
-                  ) : null}
-                </div>
+                <p className="text-xs uppercase tracking-[0.24em] text-white/32">
+                  {collectionItems.length} images
+                </p>
               </div>
             </motion.button>
           );

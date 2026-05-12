@@ -3,7 +3,6 @@ import { portfolioItems } from "../data/portfolio";
 import { HeroSection } from "../components/HeroSection";
 import { AboutSection } from "../components/AboutSection";
 import { FeaturedWorksSection } from "../components/FeaturedWorksSection";
-import { ServicesSection } from "../components/ServicesSection";
 import { ConsultationBanner } from "../components/ConsultationBanner";
 import { useStudioLightbox } from "../hooks/useStudioLightbox";
 import { useStudioNavigation } from "../hooks/useStudioNavigation";
@@ -38,22 +37,15 @@ export const HomePage = () => {
           onBrowsePortfolio={() => navigate("/portfolio")}
           onBookSession={startBookingFlow}
           eyebrow="Featured Works"
-          title="A homepage curation designed to sell the studio before the full archive opens."
-          copy="The strongest frames lead first. This editorial mix is there to build trust quickly, signal range, and move a visitor naturally toward booking."
-        />
-        <ServicesSection
-          eyebrow="Services Preview"
-          title="Photography services positioned like premium offers, not a generic rate card."
-          copy="The service mix is intentionally concise on the homepage so visitors can understand the offer quickly, then move deeper or book immediately."
-          limit={3}
-          showCtaCard={false}
+          title="A small selection from recent work."
+          copy="Portraits, events, and quiet in-between moments."
         />
         <ConsultationBanner
-          eyebrow="Next Step"
-          title="When the work feels right, the booking flow should feel just as considered."
-          copy="Warrior Lens uses a guided consultation-style booking experience that saves progress, validates each step, and sets the tone for a premium client relationship from the first inquiry."
+          eyebrow="Booking"
+          title="Tell us what you need and we will reply with the next step."
+          copy="Based in Nigeria. Available for events, portraits, and creative shoots."
           primaryAction={{ label: "Book a Session", onClick: startBookingFlow }}
-          secondaryAction={{ label: "Explore Services", onClick: () => navigate("/services") }}
+          secondaryAction={{ label: "View Portfolio", onClick: () => navigate("/portfolio") }}
         />
       </main>
     </>

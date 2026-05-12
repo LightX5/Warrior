@@ -16,11 +16,11 @@ const warriorAiRouteContexts = {
   "/": {
     panelTitle: "Studio Guide",
     panelCopy:
-      "A premium preview assistant for helping visitors move toward the right next step.",
+      "A simple guide for choosing the right next step.",
     launcherCopy: "Ask about shoots, pricing, or next steps",
     placeholder: "Tell Warrior AI the kind of shoot you want...",
     greeting:
-      "Hi, I'm Warrior AI. I can help you find the right Warrior Lens experience and point you to the best next step. What kind of shoot are you thinking about?",
+      "Hi, I'm Warrior AI. Tell me the kind of shoot you want and I'll point you to the best next step.",
     actions: shootPrompts,
   },
   "/portfolio": {
@@ -41,7 +41,7 @@ const warriorAiRouteContexts = {
   "/services": {
     panelTitle: "Services Guide",
     panelCopy:
-      "I can help you narrow the right offer before you move into the booking consultation.",
+      "I can help you choose the right service before you book.",
     launcherCopy: "Need help choosing the right service?",
     placeholder: "Ask Warrior AI which service fits your session...",
     greeting:
@@ -56,7 +56,7 @@ const warriorAiRouteContexts = {
   "/booking": {
     panelTitle: "Booking Assistant",
     panelCopy:
-      "I can help clarify service type, date planning, or what to include in your booking brief.",
+      "I can help with service type, date planning, or what to write in your brief.",
     launcherCopy: "Need help choosing a service or planning the brief?",
     placeholder: "Ask Warrior AI about service, date, location, or your brief...",
     greeting:
@@ -71,7 +71,7 @@ const warriorAiRouteContexts = {
   "/contact": {
     panelTitle: "Contact Assistant",
     panelCopy:
-      "I can point you to the fastest channel or move you into the booking consultation if you're ready.",
+      "I can point you to the fastest contact option or send you to booking if you're ready.",
     launcherCopy: "Need the fastest way to reach the studio?",
     placeholder: "Ask Warrior AI about contact options or booking...",
     greeting:
@@ -151,7 +151,7 @@ export const buildWarriorAiReply = (userInput, pathname = "/") => {
   if (!input || includesAny(input, ["hi", "hello", "hey"])) {
     return {
       text:
-        "Glad you're here. Tell me the kind of shoot you want, and I'll point you toward the best next step.",
+        "Tell me the kind of shoot you want, and I'll point you toward the best next step.",
       actions: createWarriorAiGreeting(pathname).actions,
     };
   }
@@ -183,7 +183,7 @@ export const buildWarriorAiReply = (userInput, pathname = "/") => {
   if (includesAny(input, ["price", "pricing", "quote", "cost", "budget"])) {
     return {
       text:
-        "The best pricing path is still the booking flow, because Warrior Lens needs the service type, duration, location, and date to respond properly instead of guessing.",
+        "For pricing, the booking page is the best place to start because it includes the service, duration, location, and date.",
       actions: [suggestedRoutes.booking, suggestedRoutes.services, suggestedRoutes.portfolio],
     };
   }
@@ -195,7 +195,7 @@ export const buildWarriorAiReply = (userInput, pathname = "/") => {
 
   return {
     text:
-      "That sounds like something Warrior Lens can shape into a strong visual story. The clearest next move is the booking page so the studio can review your request personally. If you want more context first, the portfolio and services pages are the best places to continue.",
+      "That sounds like a good fit for Warrior Lens. The clearest next move is the booking page so the studio can review your request properly. If you want more context first, use the portfolio or services page.",
     actions: [suggestedRoutes.booking, suggestedRoutes.portfolio, suggestedRoutes.services],
   };
 };

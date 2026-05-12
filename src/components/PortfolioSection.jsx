@@ -9,8 +9,8 @@ export const PortfolioSection = ({
   items,
   onOpenLightbox,
   eyebrow = "Portfolio",
-  title = "Selected frames arranged for quick browsing, deeper viewing, and future expansion.",
-  copy = "A filterable portfolio now populated with real Warrior Lens work across portraits, events, creative studies, and documentary frames. The full live collection can still be opened on Pixies anytime.",
+  title = "Selected work.",
+  copy = "Portraits, events, creative shoots, and documentary work.",
   showArchiveBanner = true,
   onCheckAvailability,
 }) => {
@@ -31,10 +31,9 @@ export const PortfolioSection = ({
         <SectionHeading eyebrow={eyebrow} title={title} copy={copy} />
 
         {showArchiveBanner ? (
-          <div className="mt-8 flex flex-wrap items-center gap-4 rounded-[1.75rem] border border-white/10 bg-white/[0.03] p-5">
+          <div className="mt-8 flex flex-wrap items-center gap-4 rounded-[1.25rem] border border-white/10 p-5">
             <p className="max-w-3xl text-sm leading-7 text-white/68">
-              This gallery features selected Warrior Lens originals on-site, while the broader
-              public archive remains available through Pixies for clients who want to browse more.
+              A larger archive is still available on Pixies if you want to browse more.
             </p>
             <a
               href={siteConfig.portfolioUrl}
@@ -64,8 +63,8 @@ export const PortfolioSection = ({
                 type="button"
                 className={`min-h-11 shrink-0 touch-manipulation rounded-full border px-4 py-2 text-sm transition active:scale-[0.985] ${
                   activeFilter === category
-                    ? "border-accent bg-accent text-black"
-                    : "border-white/10 bg-white/5 text-white/65 hover:border-white/20 hover:text-white"
+                    ? "border-white bg-white text-black"
+                    : "border-white/10 bg-transparent text-white/65 hover:border-white/25 hover:text-white"
                 }`}
                 onClick={() => {
                   startTransition(() => {
@@ -93,10 +92,10 @@ export const PortfolioSection = ({
               >
                 <button
                   type="button"
-                  className="group glass-panel block w-full touch-manipulation overflow-hidden rounded-[1.75rem] text-left transition active:scale-[0.992]"
+                  className="group block w-full touch-manipulation overflow-hidden rounded-[1.25rem] border border-white/10 bg-black text-left transition active:scale-[0.992]"
                   onClick={() => onOpenLightbox(item.id)}
                 >
-                  <div className="relative overflow-hidden">
+                  <div className="overflow-hidden">
                     <LazyImage
                       src={item.image}
                       alt={item.alt}
@@ -105,26 +104,19 @@ export const PortfolioSection = ({
                       sizes="(min-width: 1280px) 30vw, (min-width: 768px) 46vw, 100vw"
                       imgClassName="duration-700 group-hover:scale-[1.06] group-hover:brightness-105"
                     />
-                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent opacity-90" />
-                    <div className="pointer-events-none absolute inset-x-0 top-0 flex items-center justify-between px-5 pt-5">
-                      <span className="translate-y-2 rounded-full border border-white/10 bg-black/35 px-3 py-1 text-[0.68rem] uppercase tracking-[0.28em] text-white/0 transition duration-300 group-hover:translate-y-0 group-hover:text-white/70">
-                        Open Frame
-                      </span>
-                    </div>
                   </div>
-                    <div className="space-y-3 p-4 sm:p-6">
+                  <div className="space-y-3 p-4 sm:p-5">
                     <div className="flex flex-wrap items-center gap-3">
-                      <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[0.68rem] uppercase tracking-[0.28em] text-accent-soft/90">
+                      <span className="text-[0.68rem] uppercase tracking-[0.28em] text-white/45">
                         {item.category}
                       </span>
                       {item.collection ? (
-                        <span className="text-[0.68rem] uppercase tracking-[0.24em] text-white/36">
+                        <span className="text-[0.68rem] uppercase tracking-[0.24em] text-white/32">
                           {item.collection}
                         </span>
                       ) : null}
                     </div>
-                    <h3 className="font-display text-[1.85rem] text-white sm:text-3xl">{item.title}</h3>
-                    <p className="text-sm leading-7 text-white/65">{item.description}</p>
+                    <h3 className="font-display text-[1.55rem] text-white sm:text-[1.9rem]">{item.title}</h3>
                   </div>
                 </button>
               </motion.article>

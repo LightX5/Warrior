@@ -21,6 +21,7 @@
     "framer-motion": "^12.38.0",
     "mongoose": "^9.5.0",
     "nodemailer": "^8.0.6",
+    "openai": "^6.37.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "react-helmet-async": "^3.0.0"

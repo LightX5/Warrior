@@ -1,27 +1,12 @@
 import { motion } from "framer-motion";
 import { services } from "../data/services";
 import { SectionHeading } from "./SectionHeading";
-import {
-  ArrowRightIcon,
-  BrushIcon,
-  CalendarIcon,
-  CameraIcon,
-  FilmIcon,
-  SparklesIcon,
-} from "./icons";
-
-const iconMap = {
-  brush: BrushIcon,
-  calendar: CalendarIcon,
-  camera: CameraIcon,
-  film: FilmIcon,
-  sparkles: SparklesIcon,
-};
+import { ArrowRightIcon } from "./icons";
 
 export const ServicesSection = ({
   eyebrow = "Services",
-  title = "Purposeful offerings built for portraits, occasions, concepts, and post-production.",
-  copy = "Each service is presented with enough structure for clients today and enough flexibility for future payment, package, and admin tooling.",
+  title = "Photography for events, portraits, and stories that matter.",
+  copy = "Simple, clear services with room to talk through the details properly.",
   limit = services.length,
   showCtaCard = true,
   onBookSession,
@@ -31,45 +16,31 @@ export const ServicesSection = ({
       <SectionHeading eyebrow={eyebrow} title={title} copy={copy} />
 
       <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-        {services.slice(0, limit).map((service, index) => {
-          const Icon = iconMap[service.icon];
-
-          return (
-            <motion.article
-              key={service.title}
-              className="glass-panel rounded-[1.75rem] p-6"
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.15 }}
-              transition={{ duration: 0.45, delay: index * 0.06 }}
-            >
-              <div className="inline-flex rounded-2xl border border-accent/30 bg-accent/10 p-3 text-accent-soft">
-                <Icon />
-              </div>
-              <h3 className="mt-5 font-display text-3xl text-white">{service.title}</h3>
-              <p className="mt-4 text-sm leading-7 text-white/68">{service.description}</p>
-              <div className="mt-6 flex items-center justify-between gap-3">
-                <span className="text-xs uppercase tracking-[0.35em] text-white/35">Pricing</span>
-                <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/80">
-                  {service.price}
-                </span>
-              </div>
-            </motion.article>
-          );
-        })}
+        {services.slice(0, limit).map((service, index) => (
+          <motion.article
+            key={service.title}
+            className="rounded-[1.25rem] border border-white/10 p-6"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.45, delay: index * 0.06 }}
+          >
+            <p className="text-xs uppercase tracking-[0.32em] text-white/40">Service</p>
+            <h3 className="mt-4 font-display text-3xl text-white">{service.title}</h3>
+            <p className="mt-4 text-sm leading-7 text-white/68">{service.description}</p>
+            <p className="mt-6 text-sm text-white/52">{service.price}</p>
+          </motion.article>
+        ))}
       </div>
 
       {showCtaCard && onBookSession ? (
-        <div className="glass-panel mt-8 rounded-[1.9rem] p-6 sm:p-7">
+        <div className="mt-8 border-t border-white/10 pt-6">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
             <div className="max-w-2xl">
-              <p className="section-eyebrow mb-3">Ready to Book?</p>
-              <h3 className="font-display text-3xl text-white sm:text-4xl">
-                Turn interest into a checked date and a real consultation.
-              </h3>
+              <p className="section-eyebrow mb-3">Booking</p>
+              <h3 className="font-display text-3xl text-white sm:text-4xl">If you have a date in mind, send the details.</h3>
               <p className="mt-4 text-sm leading-7 text-white/68">
-                Use the booking flow to select the service, date, location, and shoot brief in a
-                way that feels tailored rather than generic.
+                The booking page is the best place to share the service, date, location, and brief.
               </p>
             </div>
 

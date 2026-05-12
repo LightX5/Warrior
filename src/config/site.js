@@ -3,15 +3,15 @@ import { portfolioItems } from "../data/portfolio";
 export const siteMetadata = {
   title: "Warrior Lens Studio | Every Frame Tells a Story",
   description:
-    "Warrior Lens Studio is a premium visual storytelling photography platform for portraits, documentary work, events, and creative sessions.",
+    "Photography for events, portraits, and stories that matter. Based in Nigeria. Available for events, portraits, and creative shoots.",
 };
 
 export const siteConfig = {
-  brandName: "Warrior Lens",
+  brandName: "Warrior Lens Studio",
   projectName: "Warrior Lens Studio",
   tagline: "Every Frame Tells a Story",
   founder: "Obe Oluwagbemiga",
-  founderRole: "Founder & CEO",
+  founderRole: "Photographer",
   founderImage: "/team/obe-oluwagbemiga-ceo.jpg",
   instagramHandle: "@warriorlens_media",
   instagramUrl: "https://www.instagram.com/warriorlens_media/",

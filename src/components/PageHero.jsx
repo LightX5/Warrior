@@ -9,79 +9,73 @@ export const PageHero = ({
   actions = [],
   visual,
 }) => (
-  <section className="relative overflow-hidden pb-8 pt-10 sm:pb-12 sm:pt-12 lg:pb-14 lg:pt-16">
-    <div className="section-shell relative">
-      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[26rem] bg-[radial-gradient(circle_at_top,rgba(213,179,89,0.18),transparent_45%)]" />
+  <section className="pb-6 pt-8 sm:pb-10 sm:pt-10 lg:pb-12 lg:pt-12">
+    <div className="section-shell">
+      <motion.div
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, ease: "easeOut" }}
+        className="max-w-3xl"
+      >
+        <p className="section-eyebrow">{eyebrow}</p>
+        <h1 className="font-display text-[clamp(2.4rem,6vw,4.8rem)] leading-[0.98] tracking-[-0.04em] text-white">
+          {title}
+        </h1>
+        <p className="mt-5 max-w-2xl text-base leading-7 text-white/66">{copy}</p>
 
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,0.52fr)] lg:items-center lg:gap-12">
+        {actions.length > 0 ? (
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            {actions.map((action) => {
+              const classes =
+                action.variant === "secondary" ? "secondary-button" : "primary-button";
+
+              return (
+                <button
+                  key={action.label}
+                  type="button"
+                  className={`${classes} w-full justify-center sm:w-auto`}
+                  onClick={action.onClick}
+                >
+                  {action.label}
+                  {action.showArrow === false ? null : <ArrowRightIcon />}
+                </button>
+              );
+            })}
+          </div>
+        ) : null}
+      </motion.div>
+
+      {visual ? (
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
+          className="mt-10 overflow-hidden rounded-[1.4rem] border border-white/10"
+          initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="max-w-4xl"
+          transition={{ duration: 0.5, delay: 0.06, ease: "easeOut" }}
         >
-          <p className="section-eyebrow">{eyebrow}</p>
-          <h1 className="font-display text-[clamp(2.7rem,6vw,5.2rem)] leading-[0.97] tracking-[-0.04em] text-white">
-            {title}
-          </h1>
-          <p className="mt-5 max-w-[38rem] text-sm leading-7 text-white/68 sm:text-base sm:leading-8">
-            {copy}
-          </p>
-
-          {actions.length > 0 ? (
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              {actions.map((action) => {
-                const classes =
-                  action.variant === "secondary" ? "secondary-button" : "primary-button";
-
-                return (
-                  <button
-                    key={action.label}
-                    type="button"
-                    className={`${classes} w-full justify-center sm:w-auto`}
-                    onClick={action.onClick}
-                  >
-                    {action.label}
-                    {action.showArrow === false ? null : <ArrowRightIcon />}
-                  </button>
-                );
-              })}
-            </div>
-          ) : null}
-        </motion.div>
-
-        {visual ? (
-          <motion.div
-            className="glass-panel overflow-hidden rounded-[2rem]"
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.08, ease: "easeOut" }}
-          >
-            <div className="relative aspect-[4/4.7] overflow-hidden">
-              <LazyImage
-                src={visual.image}
-                alt={visual.alt}
-                className="h-full w-full"
-                imgClassName="object-cover"
-                sizes="(min-width: 1024px) 32vw, 100vw"
-                priority
-              />
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-black/12 to-transparent" />
-            </div>
-            <div className="space-y-3 p-5 sm:p-6">
+          <div className="relative aspect-[16/11] overflow-hidden md:aspect-[16/8]">
+            <LazyImage
+              src={visual.image}
+              alt={visual.alt}
+              className="h-full w-full"
+              imgClassName="object-cover"
+              sizes="100vw"
+              priority
+            />
+            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08)_0%,rgba(0,0,0,0.18)_45%,rgba(0,0,0,0.6)_100%)]" />
+            <div className="absolute inset-x-0 bottom-0 max-w-2xl p-5 sm:p-8">
               {visual.eyebrow ? (
-                <p className="text-xs uppercase tracking-[0.32em] text-accent-soft/90">
+                <p className="text-[0.72rem] uppercase tracking-[0.2em] text-white/60">
                   {visual.eyebrow}
                 </p>
               ) : null}
-              <h2 className="font-display text-[1.9rem] leading-tight text-white sm:text-3xl">
+              <h2 className="mt-3 font-display text-[1.8rem] leading-tight text-white sm:text-[2.4rem]">
                 {visual.title}
               </h2>
-              {visual.copy ? <p className="text-sm leading-7 text-white/68">{visual.copy}</p> : null}
+              {visual.copy ? <p className="mt-3 text-sm leading-7 text-white/72">{visual.copy}</p> : null}
             </div>
-          </motion.div>
-        ) : null}
-      </div>
+          </div>
+        </motion.div>
+      ) : null}
     </div>
   </section>
 );

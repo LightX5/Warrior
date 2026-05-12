@@ -13,14 +13,14 @@ export const AboutSection = () => (
         transition={{ duration: 0.7, ease: "easeOut" }}
       >
         <SectionHeading
-          eyebrow="About the Studio"
-          title="A visual brand built around emotion, culture, and human presence."
-          copy="Warrior Lens is a creative photography studio founded by Obe Oluwagbemiga. The brand is dedicated to capturing authentic emotions, culture, and human moments through powerful visual storytelling. Every frame is intentional, every image tells a story."
+          eyebrow="About"
+          title="Warrior Lens Studio is run by Obe Oluwagbemiga."
+          copy="Based in Nigeria, the studio focuses on events, portraits, and personal work. The approach is simple: photographs should feel honest, calm, and well made."
         />
       </motion.div>
 
       <motion.div
-        className="glass-panel overflow-hidden rounded-[2rem]"
+        className="overflow-hidden rounded-[1.5rem] border border-white/10 bg-black"
         initial={{ opacity: 0, y: 28 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.25 }}
@@ -36,9 +36,9 @@ export const AboutSection = () => (
           />
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-black/15 to-transparent" />
           <div className="absolute inset-x-0 bottom-0 p-6">
-            <p className="section-eyebrow mb-2">Leadership</p>
+            <p className="section-eyebrow mb-2">Photographer</p>
             <h3 className="font-display text-4xl text-white">{siteConfig.founder}</h3>
-            <p className="mt-2 text-sm uppercase tracking-[0.28em] text-accent-soft/90">
+            <p className="mt-2 text-sm uppercase tracking-[0.28em] text-white/55">
               {siteConfig.founderRole}
             </p>
           </div>
@@ -46,25 +46,13 @@ export const AboutSection = () => (
 
         <div className="p-8">
           <p className="text-sm leading-7 text-white/68">
-            Nigerian photographer and Mathematics student at Obafemi Awolowo University,
-            bringing precision, emotional awareness, and conceptual clarity into every
-            visual narrative.
+            Obe is a Nigerian photographer and Mathematics student at Obafemi Awolowo
+            University. His work moves between portraits, events, documentary frames, and
+            quiet personal studies.
           </p>
-
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.03] p-5">
-              <p className="text-xs uppercase tracking-[0.35em] text-accent-soft/90">Approach</p>
-              <p className="mt-3 text-sm leading-7 text-white/68">
-                Editorial polish with documentary honesty.
-              </p>
-            </div>
-            <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.03] p-5">
-              <p className="text-xs uppercase tracking-[0.35em] text-accent-soft/90">Focus</p>
-              <p className="mt-3 text-sm leading-7 text-white/68">
-                Portraits, concepts, live moments, and culture.
-              </p>
-            </div>
-          </div>
+          <p className="mt-4 text-sm leading-7 text-white/68">
+            Every frame should feel honest. That is what guides the work here.
+          </p>
         </div>
       </motion.div>
     </div>

@@ -1,5 +1,7 @@
-import fs from "node:fs/promises";
+import fs from "node:fs";
+import fsPromises from "node:fs/promises";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
 import sharp from "sharp";
 
 const projectRoot = process.cwd();
@@ -12,6 +14,56 @@ const responsiveBreakpoints = [480, 768, 1080, 1440, 1920];
 
 const toPosix = (value) => value.split(path.sep).join("/");
 
+const pathExists = async (targetPath) => {
+  try {
+    await fsPromises.access(targetPath);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const getLatestModifiedTime = async (folderName) => {
+  const folderPath = path.join(publicDir, folderName);
+  const entries = await fsPromises.readdir(folderPath, { withFileTypes: true });
+
+  const imageFiles = entries
+    .filter((entry) => entry.isFile())
+    .map((entry) => path.join(folderPath, entry.name))
+    .filter((filePath) => supportedExtensions.has(path.extname(filePath).toLowerCase()));
+
+  const stats = await Promise.all(imageFiles.map((filePath) => fsPromises.stat(filePath)));
+  return stats.reduce((latest, stat) => Math.max(latest, stat.mtimeMs), 0);
+};
+
+const hasAllGeneratedAssets = async () => {
+  if (!(await pathExists(manifestPath))) {
+    return false;
+  }
+
+  try {
+    const manifestModule = await import(
+      `${pathToFileURL(manifestPath).href}?ts=${Date.now()}`
+    );
+    const manifest = manifestModule.imageManifest ?? {};
+
+    return Object.values(manifest).every((asset) => {
+      const refs = [
+        asset.defaultWebpSrc,
+        ...(asset.webpSrcSet
+          ? asset.webpSrcSet.split(",").map((item) => item.trim().split(" ")[0])
+          : []),
+      ].filter(Boolean);
+
+      return refs.every((ref) =>
+        fs.existsSync(path.join(publicDir, ref.replace(/^\//, "").replace(/\//g, path.sep)))
+      );
+    });
+  } catch {
+    return false;
+  }
+};
+
 const getVariantWidths = (originalWidth) => {
   const maxOutputWidth = Math.min(originalWidth, 1920);
   const widths = responsiveBreakpoints.filter((width) => width < maxOutputWidth);
@@ -21,7 +73,7 @@ const getVariantWidths = (originalWidth) => {
 
 const readImageFiles = async (folderName) => {
   const folderPath = path.join(publicDir, folderName);
-  const entries = await fs.readdir(folderPath, { withFileTypes: true });
+  const entries = await fsPromises.readdir(folderPath, { withFileTypes: true });
 
   return entries
     .filter((entry) => entry.isFile())
@@ -30,8 +82,27 @@ const readImageFiles = async (folderName) => {
     .sort((left, right) => left.localeCompare(right));
 };
 
-await fs.rm(optimizedDir, { recursive: true, force: true });
-await fs.mkdir(optimizedDir, { recursive: true });
+const manifestExists = await pathExists(manifestPath);
+const optimizedExists = await pathExists(optimizedDir);
+
+if (manifestExists && optimizedExists) {
+  const [manifestStats, latestSourceMtime] = await Promise.all([
+    fsPromises.stat(manifestPath),
+    Promise.all(sourceFolders.map((folderName) => getLatestModifiedTime(folderName))).then(
+      (times) => Math.max(...times, 0)
+    ),
+  ]);
+
+  const assetsAreComplete = await hasAllGeneratedAssets();
+
+  if (manifestStats.mtimeMs >= latestSourceMtime && assetsAreComplete) {
+    console.log("Image manifest already up to date.");
+    process.exit(0);
+  }
+}
+
+await fsPromises.rm(optimizedDir, { recursive: true, force: true });
+await fsPromises.mkdir(optimizedDir, { recursive: true });
 
 const manifest = {};
 
@@ -51,7 +122,7 @@ for (const sourceFolder of sourceFolders) {
 
     const variantWidths = getVariantWidths(metadata.width);
     const outputDirectory = path.join(optimizedDir, relativeDirectory);
-    await fs.mkdir(outputDirectory, { recursive: true });
+    await fsPromises.mkdir(outputDirectory, { recursive: true });
 
     const variants = [];
 
@@ -86,6 +157,6 @@ for (const sourceFolder of sourceFolders) {
 }
 
 const manifestContents = `export const imageManifest = ${JSON.stringify(manifest, null, 2)};\n`;
-await fs.writeFile(manifestPath, manifestContents, "utf8");
+await fsPromises.writeFile(manifestPath, manifestContents, "utf8");
 
 console.log(`Generated ${Object.keys(manifest).length} optimized image entries.`);

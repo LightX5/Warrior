@@ -2,7 +2,7 @@ import path from "path";
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { fileURLToPath } from "url";
+import { fileURLToPath, pathToFileURL } from "url";
 import bookingRoutes from "./routes/bookingRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
 import warriorAiRoutes from "./routes/warriorAiRoutes.js";
@@ -76,6 +76,15 @@ export const startServer = async () => {
   });
 };
 
-if (process.argv[1] && path.resolve(process.argv[1]) === __filename) {
+const isDirectRun = () => {
+  if (!process.argv[1]) {
+    return false;
+  }
+
+  const argvUrl = pathToFileURL(path.resolve(process.argv[1])).href.toLowerCase();
+  return import.meta.url.toLowerCase() === argvUrl;
+};
+
+if (isDirectRun()) {
   startServer();
 }

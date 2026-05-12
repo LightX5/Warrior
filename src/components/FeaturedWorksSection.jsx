@@ -9,8 +9,8 @@ export const FeaturedWorksSection = ({
   onBrowsePortfolio,
   onBookSession,
   eyebrow = "Featured Works",
-  title = "Frames curated to lead with emotion, polish, and intent.",
-  copy = "Not every image should carry the same visual weight. These are arranged like lead campaign frames to set tone before the full archive opens up.",
+  title = "A small selection from recent work.",
+  copy = "A few frames to begin with before the full portfolio opens up.",
 }) => {
   const [leadItem, ...supportingItems] = items;
 
@@ -26,7 +26,7 @@ export const FeaturedWorksSection = ({
         <div className="mt-10 grid gap-5 xl:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
           <button
             type="button"
-            className="group glass-panel relative overflow-hidden rounded-[2rem] text-left transition active:scale-[0.992]"
+            className="group overflow-hidden rounded-[1.5rem] border border-white/10 bg-black text-left transition active:scale-[0.992]"
             onClick={() => onOpenLightbox(leadItem.id)}
           >
             <LazyImage
@@ -37,13 +37,11 @@ export const FeaturedWorksSection = ({
               sizes="(min-width: 1280px) 48vw, 100vw"
               imgClassName="duration-700 group-hover:scale-[1.04] group-hover:brightness-105"
             />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
-            <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
-              <p className="text-xs uppercase tracking-[0.32em] text-accent-soft/90">
-                Lead Selection
+            <div className="space-y-3 p-6 sm:p-8">
+              <p className="text-xs uppercase tracking-[0.32em] text-white/45">
+                {leadItem.category}
               </p>
-              <h3 className="mt-3 font-display text-4xl text-white sm:text-5xl">{leadItem.title}</h3>
-              <p className="mt-4 max-w-xl text-sm leading-7 text-white/72">{leadItem.description}</p>
+              <h3 className="font-display text-4xl text-white sm:text-5xl">{leadItem.title}</h3>
             </div>
           </button>
 
@@ -52,7 +50,7 @@ export const FeaturedWorksSection = ({
               <motion.button
                 key={item.id}
                 type="button"
-                className="group glass-panel relative overflow-hidden rounded-[1.8rem] text-left transition active:scale-[0.992]"
+                className="group overflow-hidden rounded-[1.5rem] border border-white/10 bg-black text-left transition active:scale-[0.992]"
                 onClick={() => onOpenLightbox(item.id)}
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -67,25 +65,20 @@ export const FeaturedWorksSection = ({
                   sizes="(min-width: 1280px) 32vw, (min-width: 768px) 40vw, 100vw"
                   imgClassName="duration-700 group-hover:scale-[1.05] group-hover:brightness-105"
                 />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-black/10 to-transparent" />
-                <div className="absolute inset-x-0 bottom-0 p-5">
-                  <p className="text-xs uppercase tracking-[0.3em] text-accent-soft/85">
-                    {item.category}
-                  </p>
-                  <h4 className="mt-3 font-display text-3xl text-white">{item.title}</h4>
+                <div className="space-y-3 p-5">
+                  <p className="text-xs uppercase tracking-[0.3em] text-white/45">{item.category}</p>
+                  <h4 className="font-display text-3xl text-white">{item.title}</h4>
                 </div>
               </motion.button>
             ))}
           </div>
         </div>
 
-        <div className="glass-panel mt-8 rounded-[1.85rem] p-6 sm:p-7">
+        <div className="mt-8 border-t border-white/10 pt-6">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
             <div className="max-w-2xl">
-              <p className="section-eyebrow mb-3">Studio Direction</p>
-              <h3 className="font-display text-3xl text-white sm:text-4xl">
-                Browse the full collection or move straight into a personal booking review.
-              </h3>
+              <p className="section-eyebrow mb-3">Next</p>
+              <h3 className="font-display text-3xl text-white sm:text-4xl">See more work or send an inquiry.</h3>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
               <button

@@ -191,7 +191,7 @@ export const WarriorAIChat = () => {
                 />
                 <button
                   type="submit"
-                  className="primary-button h-[3.2rem] w-[3.2rem] shrink-0 rounded-[1.2rem] px-0"
+                  className="primary-button h-[3.2rem] w-[3.2rem] shrink-0 px-0"
                   disabled={isThinking}
                   aria-label="Send message"
                 >
@@ -213,7 +213,7 @@ export const WarriorAIChat = () => {
 
       <motion.button
         type="button"
-        className={`fixed bottom-[var(--warrior-ai-action-bottom)] left-4 z-[60] inline-flex h-12 w-12 touch-manipulation items-center justify-center rounded-[1.35rem] border border-accent/30 bg-[#0f0f0f]/96 p-0 text-left shadow-[0_24px_55px_rgba(0,0,0,0.42)] backdrop-blur-xl transition active:scale-[0.98] hover:-translate-y-1 hover:border-accent/50 sm:bottom-6 sm:left-auto sm:right-6 sm:h-auto sm:w-auto sm:gap-3 sm:px-4 sm:py-3 ${
+        className={`fixed bottom-[var(--warrior-ai-action-bottom)] left-4 z-[60] inline-flex min-h-12 touch-manipulation items-center justify-center gap-2 rounded-full border border-accent/30 bg-[#0f0f0f]/96 px-4 py-3 text-left shadow-[0_24px_55px_rgba(0,0,0,0.42)] backdrop-blur-xl transition active:scale-[0.98] hover:-translate-y-1 hover:border-accent/50 sm:bottom-6 sm:left-auto sm:right-6 sm:min-h-0 sm:rounded-[1.35rem] sm:px-4 sm:py-3 ${
           isHeroFirstScreen
             ? "pointer-events-none opacity-0 sm:pointer-events-auto sm:opacity-72"
             : isOpen
@@ -227,14 +227,12 @@ export const WarriorAIChat = () => {
         aria-expanded={isOpen}
         aria-controls="warrior-ai-panel"
       >
-        <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-accent/20 bg-accent/10 text-accent-soft sm:h-11 sm:w-11">
+        <div className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-accent/20 bg-accent/10 text-accent-soft sm:h-11 sm:w-11 sm:rounded-2xl">
           <BotIcon />
         </div>
-        <div className="hidden sm:block">
+        <div className="block">
           <p className="text-xs uppercase tracking-[0.28em] text-accent-soft/80">Warrior AI</p>
-          <p className={`mt-1 text-sm text-white/72 ${isHeroFirstScreen ? "hidden" : "block"}`}>
-            {routeContext.launcherCopy}
-          </p>
+          <p className="mt-1 hidden text-sm text-white/72 sm:block">{routeContext.launcherCopy}</p>
         </div>
       </motion.button>
     </>

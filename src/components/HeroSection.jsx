@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { siteConfig } from "../config/site";
 import { ArrowRightIcon } from "./icons";
 import { LazyImage } from "./LazyImage";
 
@@ -37,27 +38,29 @@ export const HeroSection = ({ slides, onViewPortfolio, onBookSession }) => {
         </motion.div>
       </AnimatePresence>
 
-      <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(5,5,5,0.16)_0%,rgba(5,5,5,0.32)_26%,rgba(5,5,5,0.62)_58%,rgba(5,5,5,0.88)_100%)]" />
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_28%,rgba(213,179,89,0.14),transparent_32%)]" />
+      <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(8,8,8,0.22)_0%,rgba(8,8,8,0.3)_24%,rgba(8,8,8,0.58)_58%,rgba(8,8,8,0.9)_100%)]" />
 
-      <div className="section-shell flex min-h-[calc(100svh-5rem)] items-end py-12 sm:py-16 lg:py-20">
+      <div className="section-shell flex min-h-[calc(100svh-4.7rem)] items-end py-10 sm:min-h-[calc(100svh-5rem)] sm:py-14 lg:py-16">
         <motion.div
-          className="max-w-xl"
-          initial={{ opacity: 0, y: 12 }}
+          className="max-w-2xl"
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
+          transition={{ duration: 0.45, ease: "easeOut" }}
         >
-          <p className="text-[0.68rem] uppercase tracking-[0.38em] text-accent-soft/82">
-            Visual Storytelling Studio
+          <p className="text-[0.72rem] uppercase tracking-[0.2em] text-white/52">
+            Based in Nigeria
           </p>
-          <h1 className="mt-4 font-display text-[clamp(3.2rem,8vw,5.8rem)] leading-[0.94] tracking-[-0.04em] text-white">
-            Warrior Lens
+          <h1 className="mt-4 font-display text-[clamp(2.8rem,8vw,5.4rem)] leading-[0.94] tracking-[-0.04em] text-white">
+            {siteConfig.projectName}
           </h1>
-          <p className="mt-3 text-lg text-white/76 sm:text-[1.35rem]">
-            Every Frame Tells a Story
+          <p className="mt-4 text-base text-white/84 sm:text-[1.2rem]">
+            {siteConfig.tagline}
           </p>
-          <p className="mt-5 text-[0.7rem] uppercase tracking-[0.34em] text-white/42 sm:text-xs">
-            Portraits / Documentary / Events
+          <p className="mt-6 max-w-xl text-base leading-7 text-white/68">
+            We document real moments with care.
+          </p>
+          <p className="mt-2 max-w-xl text-base leading-7 text-white/68">
+            Photography for events, portraits, and stories that matter.
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -78,21 +81,18 @@ export const HeroSection = ({ slides, onViewPortfolio, onBookSession }) => {
             </button>
           </div>
 
-          <div className="mt-8 flex items-center gap-2">
+          <div className="mt-10 flex items-center gap-2">
             {slides.map((slide, index) => (
               <button
                 key={slide.id}
                 type="button"
                 className={`h-1.5 rounded-full transition ${
-                  activeSlide === index ? "w-12 bg-accent" : "w-6 bg-white/25"
+                  activeSlide === index ? "w-10 bg-white" : "w-5 bg-white/30"
                 }`}
                 aria-label={`Show frame ${index + 1}`}
                 onClick={() => setActiveSlide(index)}
               />
             ))}
-            <span className="ml-3 text-[0.68rem] uppercase tracking-[0.32em] text-white/38">
-              {slides[activeSlide].category}
-            </span>
           </div>
         </motion.div>
       </div>

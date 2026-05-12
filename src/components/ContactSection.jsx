@@ -5,13 +5,6 @@ import { submitContactMessage } from "../services/contactService";
 import { validateContactForm } from "../utils/validation";
 import { SectionHeading } from "./SectionHeading";
 import { FeedbackModal } from "./FeedbackModal";
-import {
-  FacebookIcon,
-  InstagramIcon,
-  MailIcon,
-  PhoneIcon,
-  WhatsAppIcon,
-} from "./icons";
 
 const initialValues = {
   name: "",
@@ -24,8 +17,8 @@ const getFieldClassName = (hasError, extraClasses = "") =>
 
 export const ContactSection = ({
   eyebrow = "Contact",
-  title = "Give clients multiple ways to reach the studio while keeping the visual language clean.",
-  copy = "Instagram, Facebook, WhatsApp, direct email, and a contact message flow are all positioned here so the studio can respond on the channel that fits best.",
+  title = "Reach the studio.",
+  copy = "If you already know what you need, send a booking request. If not, start with a message here.",
 }) => {
   const [formData, setFormData] = useState(initialValues);
   const [errors, setErrors] = useState({});
@@ -67,6 +60,17 @@ export const ContactSection = ({
     }
   };
 
+  const contactItems = [
+    { label: "WhatsApp", value: "Start a chat", href: siteConfig.whatsappUrl },
+    { label: "Email", value: siteConfig.email, href: `mailto:${siteConfig.email}` },
+    {
+      label: "Phone",
+      value: siteConfig.phoneNumber,
+      href: `tel:${siteConfig.phoneNumber.replace(/[^\d+]/g, "")}`,
+    },
+    { label: "Instagram", value: siteConfig.instagramHandle, href: siteConfig.instagramUrl },
+  ];
+
   return (
     <section id="contact" className="section-block">
       <div className="section-shell">
@@ -77,83 +81,43 @@ export const ContactSection = ({
         />
 
         <div className="mt-10 grid gap-6 xl:grid-cols-[minmax(0,0.8fr)_minmax(22rem,0.7fr)]">
-          <div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <a
-                href={siteConfig.instagramUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="glass-panel rounded-[1.75rem] p-6 transition hover:-translate-y-1"
-              >
-                <div className="inline-flex rounded-2xl border border-white/10 bg-white/5 p-3 text-accent-soft">
-                  <InstagramIcon />
-                </div>
-                <p className="mt-5 text-xs uppercase tracking-[0.35em] text-white/45">Instagram</p>
-                <p className="mt-3 text-2xl font-semibold text-white">{siteConfig.instagramHandle}</p>
-              </a>
+          <div className="space-y-8">
+            <div className="max-w-xl">
+              <p className="text-sm leading-7 text-white/68">
+                Based in Nigeria. Available for events, portraits, and creative shoots.
+              </p>
+            </div>
 
-              <a
-                href={siteConfig.facebookUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="glass-panel rounded-[1.75rem] p-6 transition hover:-translate-y-1"
-              >
-                <div className="inline-flex rounded-2xl border border-white/10 bg-white/5 p-3 text-accent-soft">
-                  <FacebookIcon />
-                </div>
-                <p className="mt-5 text-xs uppercase tracking-[0.35em] text-white/45">Facebook</p>
-                <p className="mt-3 text-2xl font-semibold text-white">{siteConfig.facebookHandle}</p>
-              </a>
-
-              <a
-                href={siteConfig.whatsappUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="glass-panel rounded-[1.75rem] p-6 transition hover:-translate-y-1"
-              >
-                <div className="inline-flex rounded-2xl border border-[#25D366]/20 bg-[#25D366]/12 p-3 text-[#25D366]">
-                  <WhatsAppIcon />
-                </div>
-                <p className="mt-5 text-xs uppercase tracking-[0.35em] text-white/45">WhatsApp</p>
-                <p className="mt-3 text-xl font-semibold text-white">Start a live chat</p>
-              </a>
-
-              <a
-                href={`tel:${siteConfig.phoneNumber.replace(/[^\d+]/g, "")}`}
-                className="glass-panel rounded-[1.75rem] p-6 transition hover:-translate-y-1"
-              >
-                <div className="inline-flex rounded-2xl border border-white/10 bg-white/5 p-3 text-accent-soft">
-                  <PhoneIcon />
-                </div>
-                <p className="mt-5 text-xs uppercase tracking-[0.35em] text-white/45">Phone</p>
-                <p className="mt-3 text-xl font-semibold text-white">{siteConfig.phoneNumber}</p>
-              </a>
-
-              <a
-                href={`mailto:${siteConfig.email}`}
-                className="glass-panel rounded-[1.75rem] p-6 transition hover:-translate-y-1"
-              >
-                <div className="inline-flex rounded-2xl border border-white/10 bg-white/5 p-3 text-accent-soft">
-                  <MailIcon />
-                </div>
-                <p className="mt-5 text-xs uppercase tracking-[0.35em] text-white/45">Email</p>
-                <p className="mt-3 text-xl font-semibold text-white">{siteConfig.email}</p>
-              </a>
+            <div className="border-t border-white/10">
+              {contactItems.map((item) => (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  target={item.href.startsWith("http") ? "_blank" : undefined}
+                  rel={item.href.startsWith("http") ? "noreferrer" : undefined}
+                  className="flex items-center justify-between gap-4 border-b border-white/10 py-4 transition hover:text-white"
+                >
+                  <span className="text-sm uppercase tracking-[0.24em] text-white/45">
+                    {item.label}
+                  </span>
+                  <span className="text-right text-base text-white/82">{item.value}</span>
+                </a>
+              ))}
             </div>
           </div>
 
           <motion.form
-            className="glass-panel rounded-[2rem] p-6 sm:p-8"
+            className="rounded-[1.5rem] border border-white/10 p-6 sm:p-8"
             initial={{ opacity: 0, y: 28 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.65, ease: "easeOut" }}
             onSubmit={handleSubmit}
           >
-            <p className="section-eyebrow">Email Contact Form</p>
+            <p className="section-eyebrow">Message</p>
             <h3 className="font-display text-4xl text-white">Send a direct message</h3>
             <p className="mt-4 text-sm leading-7 text-white/68">
-              This route is prepared for lightweight contact automation and future admin review.
+              Tell us what you need and we will reply.
             </p>
 
             <div className="mt-8 grid gap-5">
@@ -200,7 +164,7 @@ export const ContactSection = ({
                   value={formData.message}
                   onChange={handleChange}
                   className={getFieldClassName(Boolean(errors.message), "resize-none")}
-                  placeholder="Tell Warrior Lens Studio what you need."
+                  placeholder="Tell us about the shoot or question."
                 />
                 {errors.message ? <p className="field-error-text mt-2">{errors.message}</p> : null}
               </div>

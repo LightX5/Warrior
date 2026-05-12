@@ -16,13 +16,12 @@ export const Footer = () => {
     >
       <div className="section-shell grid gap-8 lg:grid-cols-[minmax(0,1fr)_auto_auto] lg:items-start">
         <div className="max-w-md">
-          <p className="font-display text-3xl text-white">Warrior Lens</p>
+          <p className="font-display text-3xl text-white">{siteConfig.brandName}</p>
           <p className="mt-4 text-sm leading-7 text-white/58">
-            Warrior Lens Copyright 2026 | Visual Storytelling Studio
+            Warrior Lens Studio © 2026
           </p>
           <p className="mt-3 text-sm leading-7 text-white/48">
-            Built as a premium acquisition platform for portraits, documentary work, events, and
-            future studio growth.
+            Based in Nigeria. Available for events, portraits, and creative shoots.
           </p>
         </div>
 

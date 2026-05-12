@@ -5,7 +5,7 @@ export const APP_WARMUP_ROUTES = ["/booking", "/portfolio", "/services", "/conta
 export const IDLE_WARMUP_TIMEOUT_MS = 1200;
 
 export const FLOATING_UI = {
-  mobileActionOffset: "calc(env(safe-area-inset-bottom)+5.5rem)",
+  mobileActionOffset: "calc(env(safe-area-inset-bottom)+4.9rem)",
   mobileBookingBarOffset: "calc(env(safe-area-inset-bottom)+0.9rem)",
   mobileChatTopOffset: "calc(env(safe-area-inset-top)+4.75rem)",
   mobileMenuBottomPadding: "calc(env(safe-area-inset-bottom)+1.15rem)",
